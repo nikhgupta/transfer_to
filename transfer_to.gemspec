@@ -1,27 +1,25 @@
-# coding: utf-8
-lib = File.expand_path('../lib', __FILE__)
-$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+$:.push File.expand_path("../lib", __FILE__)
 require 'transfer_to/version'
 
-Gem::Specification.new do |spec|
-  spec.name          = "transfer_to"
-  spec.version       = TransferTo::VERSION
-  spec.authors       = ["Nikhil Gupta"]
-  spec.email         = ["me@nikhgupta.com"]
-  spec.description   = %q{Consumes TransferTo.com API and provides with ruby methods for the same}
-  spec.summary       = %q{Gem to consume TransferTo.com API}
-  spec.homepage      = "http://rubygems.org/gems/transfer_to"
-  spec.license       = "MIT"
+Gem::Specification.new do |gem|
+  gem.name          = "transfer_to"
+  gem.version       = TransferTo::VERSION
+  gem.authors       = ['Nikhil Gupta', 'L. Doubrava']
+  gem.email         = ['me@nikhgupta.com']
+  gem.description   = %q{Consumes TransferTo.com API and provides with ruby methods for the same}
+  gem.summary       = %q{Gem to consume TransferTo.com API}
+  gem.homepage      = 'http://rubygems.org/gems/transfer_to'
+  gem.license       = 'MIT'
 
-  spec.files         = `git ls-files`.split($/)
-  spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
-  spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
-  spec.require_paths = ["lib"]
+  gem.files         = `git ls-files`.split($/)
+  gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
+  gem.require_paths = ['lib']
 
-  spec.add_development_dependency "bundler", "~> 1.3"
-  spec.add_development_dependency "rake"
+  gem.add_dependency 'faraday'
 
-  spec.add_dependency "faraday"
-
-  spec.add_development_dependency "pry"
+  gem.add_development_dependency 'bundler'
+  gem.add_development_dependency('rake', ['>= 0'])
+  gem.add_development_dependency 'byebug'
+  gem.add_development_dependency 'pry-byebug'
+  gem.add_development_dependency('rspec', ['>= 0'])
 end
