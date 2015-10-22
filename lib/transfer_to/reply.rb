@@ -3,10 +3,11 @@ module TransferTo
 
     # "reply" as received from Faraday's request
     def initialize(reply)
-      @response = reply.to_hash[:response]
+      @response = OpenStruct.new reply.to_hash
     end
 
     def format_it
+      binding.pry
       {
         data: data,
         status: status,

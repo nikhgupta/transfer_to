@@ -1,6 +1,6 @@
-require "pry"
 require "faraday"
 require "net/http"
+require 'ostruct'
 
 # require transfer_to files..
 require "transfer_to/version"

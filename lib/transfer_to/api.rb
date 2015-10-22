@@ -16,7 +16,7 @@ module TransferTo
     # This method is used to recharge a destination number with a specified
     # denomination (“product” field).
     # This is the API’s most important action as it is required when sending
-    # a topup to a prepaid account phone numberin a live! environment.
+    # a topup to a prepaid account phone number in a live! environment.
     #
     # parameters
     # ==========
@@ -46,15 +46,20 @@ module TransferTo
     # MSISDN based on the numbering plan. It must be very useful in case of
     # countries with number portability if you are able to know the destination
     # operator.
+    #
+    # simulate
+    # ----------
+    # Default: false
+    # sends the topup request without doing the actual topup.
 
     def topup(msisdn, destination, product, reserved_id = nil,
-              recipient_sms = nil, sender_sms = nil, operator_id = nil)
-      @params     = { msisdn: msisdn, destination_msisdn: destination, product: product }
-      self.oid    = operator_id
+              recipient_sms = nil, sender_sms = nil, operator_id = nil, simulate = false)
+      params = { msisdn: msisdn, destination_msisdn: destination, product: product }
 
-      @params.merge({
+      params.merge!({
         cid1: "", cid2: "", cid3: "",
         reserved_id: reserved_id,
+        operatorid: (operator_id.is_a?(Integer) ? operator_id.to_i : nil),
         sender_sms: (sender_sms ? "yes" : "no"),
         sms: recipient_sms,
         sender_text: sender_sms,
@@ -64,20 +69,25 @@ module TransferTo
         return_version: "1"
       })
 
-      run_action :topup
+      action = simulate ? :simulate : :topup
+      run_action action, params
     end
 
     # This method is used to retrieve various information of a specific MSISDN
     # (operator, country…) as well as the list of all products configured for
     # your specific account and the destination operator of the MSISDN.
-    def msisdn_info(msisdn, operator_id=nil)
-      @params = {
+    def msisdn_info(msisdn, currency, operator_id=nil)
+      params = {
         destination_msisdn: msisdn,
+        currency: currency,
         delivered_amount_info: "1",
         return_service_fee: 1
       }
-      self.oid = operator_id
-      run_action :msisdn_info
+      params.merge!({
+        operatorid: (operator_id.is_a?(Integer) ? operator_id.to_i : nil)
+      })
+
+      run_action :msisdn_info, params
     end
 
     # This method can be used to retrieve available information on a specific
@@ -86,8 +96,8 @@ module TransferTo
     # the same as the values returned in the fields “input_value” and
     # “validated_input_value” of the “topup” method response.
     def trans_info(id)
-      @params = { transactionid: id }
-      run_action :trans_info
+      params = { transactionid: id }
+      run_action :trans_info, params
     end
 
     # This method is used to retrieve the list of transactions performed within
@@ -121,12 +131,12 @@ module TransferTo
     # Defines the end date of the search (included). Format must be YYYY-MM-DD.
 
     def trans_list(start, stop, msisdn = nil, destination = nil, code = nil)
-      @params[:code]               = code unless code
-      @params[:msisdn]             = msisdn unless msisdn
-      @params[:stop_date]          = to_yyyymmdd(stop)
-      @params[:start_date]         = to_yyyymmdd(start)
-      @params[:destination_msisdn] = destination unless destination
-      run_action :trans_list
+      params[:code]               = code unless code
+      params[:msisdn]             = msisdn unless msisdn
+      params[:stop_date]          = to_yyyymmdd(stop)
+      params[:start_date]         = to_yyyymmdd(start)
+      params[:destination_msisdn] = destination unless destination
+      run_action :trans_list, params
     end
 
     # This method is used to reserve an ID in the system. This ID can then be
@@ -140,8 +150,8 @@ module TransferTo
     # This method is used to retrieve the ID of a transaction previously
     # performed based on the key used in the request at that time.
     def get_id_from_key(key)
-      @params = { from_key: key }
-      run_action :get_id_from_key
+      params = { from_key: key }
+      run_action :get_id_from_key, params
     end
 
     # This method is used to retrieve coverage and pricelist offered to you.
@@ -160,16 +170,9 @@ module TransferTo
     # iii) operatorid of the requested operator if info_type = “operator”
 
     def pricelist(info_type, content = nil)
-      @params[:info_type] = info_type
-      @params[:content] = content unless content
-      run_action :pricelist
+      params = {info_type: info_type}
+      params.merge!({content: content}) if content
+      run_action :pricelist, params
     end
-
-    private
-
-    def oid=(operator_id)
-      @params[:operatorid] = operator_id.to_i if operator_id.is_a?(Integer)
-    end
-
   end
 end
