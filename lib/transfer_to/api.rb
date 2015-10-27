@@ -1,4 +1,5 @@
 module TransferTo
+  # This is the API class for issuing requests against the TransferTo API.
   class API < Base
 
     # This method can be used when you want to test the connection and your
@@ -50,18 +51,19 @@ module TransferTo
     # simulate
     # ----------
     # Default: false
-    # sends the topup request without doing the actual topup.
-
-    def topup(msisdn, destination, product, reserved_id = nil,
+    # Sends the topup request without doing the actual topup.
+    def topup(msisdn, destination, product, skuid, currency = 'USD', reserved_id = nil,
               recipient_sms = nil, sender_sms = nil, operator_id = nil, simulate = false)
-      params = { msisdn: msisdn, destination_msisdn: destination, product: product }
+      params = { skuid: skuid, msisdn: msisdn, destination_msisdn: destination, product: product }
 
       params.merge!({
         cid1: "", cid2: "", cid3: "",
         reserved_id: reserved_id,
+        currency: currency,
         operatorid: (operator_id.is_a?(Integer) ? operator_id.to_i : nil),
         sender_sms: (sender_sms ? "yes" : "no"),
         sms: recipient_sms,
+        skuid: skuid,
         sender_text: sender_sms,
         delivered_amount_info: "1",
         return_service_fee: "1",
@@ -69,7 +71,7 @@ module TransferTo
         return_version: "1"
       })
 
-      action = simulate ? :simulate : :topup
+      action = simulate ? :simulation : :topup
       run_action action, params
     end
 
@@ -129,13 +131,15 @@ module TransferTo
     # stop_date
     # ---------
     # Defines the end date of the search (included). Format must be YYYY-MM-DD.
-
     def trans_list(start, stop, msisdn = nil, destination = nil, code = nil)
-      params[:code]               = code unless code
-      params[:msisdn]             = msisdn unless msisdn
-      params[:stop_date]          = to_yyyymmdd(stop)
-      params[:start_date]         = to_yyyymmdd(start)
+      params = { }
+
+      params[:code] = code unless code
+      params[:msisdn] = msisdn unless msisdn
+      params[:stop_date] = stop
+      params[:start_date] = start
       params[:destination_msisdn] = destination unless destination
+
       run_action :trans_list, params
     end
 
@@ -168,7 +172,6 @@ module TransferTo
     #   i) Not used if info_type = “countries”
     #  ii) countryid of the requested country if info_type = “country”
     # iii) operatorid of the requested operator if info_type = “operator”
-
     def pricelist(info_type, content = nil)
       params = {info_type: info_type}
       params.merge!({content: content}) if content

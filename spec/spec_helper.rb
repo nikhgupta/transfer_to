@@ -7,6 +7,9 @@ require 'bundler'
 # require these if you need to test with pry
 require 'byebug'
 require 'pry-byebug'
+require 'faraday'
+
+require 'date'
 
 begin
   Bundler.setup(:default, :development)

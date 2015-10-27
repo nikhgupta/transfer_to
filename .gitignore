@@ -19,4 +19,4 @@ tmp
 .rvmrc
 .idea/
 Gemfile.lock
-
+spec/credentials.txt

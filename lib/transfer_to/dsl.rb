@@ -1,4 +1,5 @@
 module TransferTo
+  # This class provides domain specific methods as wrappers over the API class
   class DSL < API
 
     # check the status of the TranferTo API
@@ -13,7 +14,5 @@ module TransferTo
       information[:product_list] = information[:product_list].split(",")
       information
     end
-
   end
 end
-
