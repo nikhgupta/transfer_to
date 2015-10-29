@@ -25,7 +25,7 @@ describe 'Transfer To API Client' do
     end
   end
 
-  # region Metric Tests
+  region Metric Tests
   it 'should send a ping and receive pong' do
     expect(@client.ping.data[:info_txt]).to eq 'pong'
   end
@@ -46,13 +46,13 @@ describe 'Transfer To API Client' do
     operators = r.data[:operatorid]
     ops = operators.split(',')
 
-    puts ""
-    puts "starting pricelist"
-    ops.each do |op_code|
-      puts " Operator #{op_code}"
-      r = @client.pricelist('operator', op_code)
-      puts " Products: #{r.data[:product_list]}"
-    end
+    # puts ""
+    # puts "starting pricelist"
+    # ops.each do |op_code|
+    #   puts " Operator #{op_code}"
+    #   r = @client.pricelist('operator', op_code)
+    #   puts " Products: #{r.data[:product_list]}"
+    # end
     operator_id = 1411
     r = @client.pricelist('operator', 1411)
     expect_succesfull_response r
@@ -82,22 +82,35 @@ describe 'Transfer To API Client' do
   end
 
   it 'should simulate a topup and receive response' do
-    response = create_topup_simulation true
+    response, rid = create_topup_simulation true
 
     expect_succesfull_response response
   end
 
   it 'should simulate a topup and respond to PIN based Operators' do
-    response = create_topup_simulation true, TEST_NUMBERS[:one], TEST_NUMBERS[:one]
+    response, rid = create_topup_simulation true, TEST_NUMBERS[:one], TEST_NUMBERS[:one]
 
     expect_succesfull_response response
   end
 
+  it 'should simulate a PIN based operator and respond with all corresponding fields' do
+    response, rid = create_topup_simulation true, TEST_NUMBERS[:one], TEST_NUMBERS[:one]
+
+    expect_succesfull_response response
+    expect_PIN_based_response_fields response
+  end
+
   it 'should simulate a topup and respond to PIN less Operators' do
-    response = create_topup_simulation true, TEST_NUMBERS[:two], TEST_NUMBERS[:two]
+    response, rid = create_topup_simulation true, TEST_NUMBERS[:two], TEST_NUMBERS[:two]
 
     expect_succesfull_response response
     expect(response.data[:authentication_key]).not_to eq nil
+  end
+
+  it 'should simulate a PIN less based operator and respond with all corresponding fields' do
+    response, rid = create_topup_simulation true, TEST_NUMBERS[:two], TEST_NUMBERS[:two]
+
+    expect_PIN_less_response_fields response
   end
 
   it 'should simulate a topup and throw a destination number is not a prepaid phone number error' do
@@ -106,7 +119,6 @@ describe 'Transfer To API Client' do
     }.to raise_exception(TransferToApi::Error){|ex| expect(ex.code).to eq 204}
   end
 
-  # This number is temporarily unavailable for testing ..
   it 'should simulate a topup and throw an invalid product error' do
     expect {
         create_topup_simulation false, TEST_NUMBERS[:four], TEST_NUMBERS[:four]
@@ -136,46 +148,17 @@ describe 'Transfer To API Client' do
   it 'should return the list of transactions performed during a given date range' do
     response = @client.trans_list Date.today.prev_day.to_s, Date.today.to_s
 
-    puts " -> #{response.data[:error_txt]}"
     expect_succesfull_response response
   end
 
   it 'should return all available information on a specific transaction id' do
-    simulate = true
-    msisdn = TEST_NUMBERS[:one]
-    destination = TEST_NUMBERS[:one]
-    product = 3
-    currency = 'USD'
-    operator_id = 1310
-    recipient_sms = nil
-    sender_sms = nil
-
-    # Retrieves information about the MSISDN
-    info_response = @client.msisdn_info(msisdn, currency, operator_id)
-    expect_succesfull_response info_response
-
-    sku_id = info_response.data[:skuid]
-    operatorid = info_response.data[:operatorid]
-    puts " product: #{product}"
-    puts " SKU ID: #{sku_id}"
-    puts " Operator ID: #{operatorid}"
-
-    # Creates a reservation id
-    reservation_response = create_reservation
-    expect_succesfull_response reservation_response
-
-    reserved_id = reservation_response.data[:reserved_id]
-
-    # Uses the reservation id to simulate a topup
-    r = @client.topup(msisdn, destination, product, sku_id, currency, reserved_id,
-                  recipient_sms, sender_sms, operator_id, simulate)
-    expect_succesfull_response r
+    topup_response, reserved_id = create_topup_simulation true
+    expect_succesfull_response topup_response
 
     response = @client.trans_info reserved_id
     expect_succesfull_response response
   end
   # end region
-
 
   #### Test helpers ####
   def create_reservation()
@@ -217,13 +200,45 @@ describe 'Transfer To API Client' do
     puts " Transaction ID: #{reserved_id}"
 
     # Uses the reservation id to simulate a topup
-    r = @client.topup(msisdn, destination, product, sku_id, currency, reserved_id,
-                  recipient_sms, sender_sms, operator_id, simulate)
+    response = @client.topup(msisdn, destination, product, sku_id, currency,
+      reserved_id, recipient_sms, sender_sms, operator_id, simulate)
+
+    return response, reserved_id
   end
 
   def expect_succesfull_response(response)
     expect(response.data).not_to eq nil
     expect(response.data[:error_code]).to eq 0
     expect(response.data[:error_txt]).to eq "Transaction successful"
+  end
+
+  def expect_PIN_less_response_fields(response)
+    expect(response.data[:skuid]).not_to eq nil
+    expect(response.data[:country]).not_to eq nil
+    expect(response.data[:countryid]).not_to eq nil
+    expect(response.data[:operator]).not_to eq nil
+    expect(response.data[:operatorid]).not_to eq nil
+    expect(response.data[:destination_msisdn]).not_to eq nil
+    expect(response.data[:destination_currency]).not_to eq nil
+    expect(response.data[:msisdn]).not_to eq nil
+    expect(response.data[:originating_currency]).not_to eq nil
+    expect(response.data[:wholesale_price]).not_to eq nil
+    expect(response.data[:retail_price]).not_to eq nil
+    expect(response.data[:service_fee]).not_to eq nil
+    expect(response.data[:balance]).not_to eq nil
+    expect(response.data[:return_timestamp]).not_to eq nil
+    expect(response.data[:return_version]).not_to eq nil
+  end
+
+  def expect_PIN_based_response_fields(response)
+    #expect_PIN_less_response_fields response
+
+    puts "raw #{response.raw}"
+    # expect(response.data[:pin_based]).not_to eq nil
+    # expect(response.data[:pin_validity]).not_to eq nil
+    # expect(response.data[:pin_code]).not_to eq nil
+    # expect(response.data[:pin_ivr]).not_to eq nil
+    # expect(response.data[:pin_serial]).not_to eq nil
+    # expect(response.data[:pin_value]).not_to eq nil
   end
 end

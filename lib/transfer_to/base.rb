@@ -42,6 +42,7 @@ module TransferToApi
 
       @request.run(method).on_complete do |api_reply|
         reply = ::TransferToApi::Reply.new(api_reply)
+        puts "code: #{reply.error_code}, error #{reply.error_message}"
         raise ::TransferToApi::Error.new reply.error_code, reply.error_message unless reply.success?
         return reply
       end
