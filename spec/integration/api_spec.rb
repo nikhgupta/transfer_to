@@ -25,7 +25,7 @@ describe 'Transfer To API Client' do
     end
   end
 
-  region Metric Tests
+  # region Metric Tests
   it 'should send a ping and receive pong' do
     expect(@client.ping.data[:info_txt]).to eq 'pong'
   end
@@ -231,9 +231,8 @@ describe 'Transfer To API Client' do
   end
 
   def expect_PIN_based_response_fields(response)
-    #expect_PIN_less_response_fields response
+    expect_PIN_less_response_fields response
 
-    puts "raw #{response.raw}"
     # expect(response.data[:pin_based]).not_to eq nil
     # expect(response.data[:pin_validity]).not_to eq nil
     # expect(response.data[:pin_code]).not_to eq nil
