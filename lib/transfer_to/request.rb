@@ -1,4 +1,4 @@
-module TransferTo
+module TransferToApi
   # This is the request class to issue requests against the TransferTo API.
   class Request
 

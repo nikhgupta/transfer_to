@@ -1,4 +1,4 @@
-module TransferTo
+module TransferToApi
   # This is a wrapper class for TransferTo Error codes.
   class Error < StandardError
 

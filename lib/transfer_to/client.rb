@@ -1,6 +1,6 @@
-module TransferTo
+module TransferToApi
   # This is the API class for issuing requests against the TransferTo API.
-  class API < Base
+  class Client < Base
 
     # This method can be used when you want to test the connection and your
     # account credentials.

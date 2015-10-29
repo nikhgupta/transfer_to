@@ -18,7 +18,7 @@ Or install it yourself as:
 
 ## Usage
 
-@transfer_to_client = TransferTo::API.new("account", "password")
+@transfer_to_client = TransferToApi::Client.new("account", "password")
 
 ## Contributing
 

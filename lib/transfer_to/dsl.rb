@@ -1,6 +1,6 @@
-module TransferTo
+module TransferToApi
   # This class provides domain specific methods as wrappers over the API class
-  class DSL < API
+  class DSL < Client
 
     # check the status of the TranferTo API
     def check_status

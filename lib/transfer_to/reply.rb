@@ -1,4 +1,4 @@
-module TransferTo
+module TransferToApi
   # This is the response class generated after issuing a request against the
   # TransferTo API.
   class Reply

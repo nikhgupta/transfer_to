@@ -1,12 +1,24 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe 'Transfer To API Client' do
+  # Initialize a constant list with preconfigured test numbers
+  before(:all) do
+    TEST_NUMBERS = { one:   "628123456710",
+                     two:   "628123456770",
+                     three: "628123456780",
+                     four:  "628123456781",
+                     five:  "628123456790",
+                     six:   "628123456798",
+                     seven: "628123456799"
+                   }
+  end
+
   before do
     begin
-      lines = File.readlines(File.expand_path(File.dirname(__FILE__) + '/../credentials.txt'))
-      acc = lines[0].chomp
-      pwd = lines[1].chomp
-      @client = TransferTo::API.new(acc, pwd)
+     lines = File.readlines(File.expand_path(File.dirname(__FILE__) + '/../credentials.txt'))
+     acc = lines[0].chomp
+     pwd = lines[1].chomp
+     @client = TransferToApi::Client.new(acc, pwd)
     rescue => e
       puts "#{e} Could not read credentials"
       raise
@@ -49,14 +61,14 @@ describe 'Transfer To API Client' do
 
   # region Basics Tests
   it 'should send msisdn_info with number and receive information about the carrier' do
-    response = @client.msisdn_info(TransferTo::Base::TEST_NUMBERS[:one], 'USD')
+    response = @client.msisdn_info(TEST_NUMBERS[:one], 'USD')
 
     expect_succesfull_response response
     expect(response.data[:country]).to eq 'Indonesia'
   end
 
   it 'should send msisdn_info with number and receive information about the carrier' do
-    response = @client.msisdn_info(TransferTo::Base::TEST_NUMBERS[:one], 'USD')
+    response = @client.msisdn_info(TEST_NUMBERS[:one], 'USD')
 
     expect_succesfull_response response
     expect(response.data[:country]).to eq 'Indonesia'
@@ -76,20 +88,13 @@ describe 'Transfer To API Client' do
   end
 
   it 'should simulate a topup and respond to PIN based Operators' do
-    response = create_topup_simulation true, TransferTo::Base::TEST_NUMBERS[:one], TransferTo::Base::TEST_NUMBERS[:one]
+    response = create_topup_simulation true, TEST_NUMBERS[:one], TEST_NUMBERS[:one]
 
-    puts " -> #{response.data[:error_txt]}"
     expect_succesfull_response response
-    #expect(response.data[:pin_based]).to eq "Yes"
-    #expect(response.data[:pin_validity]).not_to eq nil
-    #expect(response.data[:pin_code]).not_to eq nil
-    #expect(response.data[:pin_ivr]).not_to eq nil
-    #expect(response.data[:pin_serial]).not_to eq nil
-    #expect(response.data[:pin_value]).not_to eq nil
   end
 
   it 'should simulate a topup and respond to PIN less Operators' do
-    response = create_topup_simulation true, TransferTo::Base::TEST_NUMBERS[:two], TransferTo::Base::TEST_NUMBERS[:two]
+    response = create_topup_simulation true, TEST_NUMBERS[:two], TEST_NUMBERS[:two]
 
     expect_succesfull_response response
     expect(response.data[:authentication_key]).not_to eq nil
@@ -97,33 +102,33 @@ describe 'Transfer To API Client' do
 
   it 'should simulate a topup and throw a destination number is not a prepaid phone number error' do
     expect {
-      create_topup_simulation false, TransferTo::Base::TEST_NUMBERS[:three], TransferTo::Base::TEST_NUMBERS[:three]
-    }.to raise_exception(TransferTo::Error){|ex| expect(ex.code).to eq 204}
+      create_topup_simulation false, TEST_NUMBERS[:three], TEST_NUMBERS[:three]
+    }.to raise_exception(TransferToApi::Error){|ex| expect(ex.code).to eq 204}
   end
 
   # This number is temporarily unavailable for testing ..
   it 'should simulate a topup and throw an invalid product error' do
     expect {
-        create_topup_simulation false, TransferTo::Base::TEST_NUMBERS[:four], TransferTo::Base::TEST_NUMBERS[:four]
-    }.to raise_exception(TransferTo::Error){|ex| expect(ex.code).to eq 301}
+        create_topup_simulation false, TEST_NUMBERS[:four], TEST_NUMBERS[:four]
+    }.to raise_exception(TransferToApi::Error){|ex| expect(ex.code).to eq 301}
   end
 
   it 'should simulate a topup and throw a transaction refused error' do
       expect {
-        create_topup_simulation false, TransferTo::Base::TEST_NUMBERS[:five], TransferTo::Base::TEST_NUMBERS[:five]
-      }.to raise_exception(TransferTo::Error){|ex| expect(ex.code).to eq 214 }
+        create_topup_simulation false, TEST_NUMBERS[:five], TEST_NUMBERS[:five]
+      }.to raise_exception(TransferToApi::Error){|ex| expect(ex.code).to eq 214 }
   end
 
   it 'should simulate a topup and throw a system unavailable error' do
     expect {
-      create_topup_simulation false, TransferTo::Base::TEST_NUMBERS[:six], TransferTo::Base::TEST_NUMBERS[:six]
-    }.to raise_exception(TransferTo::Error) {|ex| expect(ex.code).to eq 998 }
+      create_topup_simulation false, TEST_NUMBERS[:six], TEST_NUMBERS[:six]
+    }.to raise_exception(TransferToApi::Error) {|ex| expect(ex.code).to eq 998 }
   end
 
   it 'should simulate a topup and throw an unknown error' do
     expect {
-      create_topup_simulation false, TransferTo::Base::TEST_NUMBERS[:seven], TransferTo::Base::TEST_NUMBERS[:seven]
-    }.to raise_exception(TransferTo::Error) {|ex| expect(ex.code).to eq 999 }
+      create_topup_simulation false, TEST_NUMBERS[:seven], TEST_NUMBERS[:seven]
+    }.to raise_exception(TransferToApi::Error) {|ex| expect(ex.code).to eq 999 }
   end
   # end region
 
@@ -136,9 +141,9 @@ describe 'Transfer To API Client' do
   end
 
   it 'should return all available information on a specific transaction id' do
-    simulate = false
-    msisdn = TransferTo::Base::TEST_NUMBERS[:one]
-    destination = TransferTo::Base::TEST_NUMBERS[:one]
+    simulate = true
+    msisdn = TEST_NUMBERS[:one]
+    destination = TEST_NUMBERS[:one]
     product = 3
     currency = 'USD'
     operator_id = 1310
@@ -166,15 +171,13 @@ describe 'Transfer To API Client' do
                   recipient_sms, sender_sms, operator_id, simulate)
     expect_succesfull_response r
 
-    response = @client.trans_info reservation_response.data[:reserved_id]
+    response = @client.trans_info reserved_id
     expect_succesfull_response response
-
-    puts " -> #{response.data[:error_txt]}"
   end
   # end region
 
 
-  # Test helpers
+  #### Test helpers ####
   def create_reservation()
     response = @client.reserve_id
 
@@ -185,8 +188,8 @@ describe 'Transfer To API Client' do
 
   def create_topup_simulation(
     simulate,
-    msisdn = TransferTo::Base::TEST_NUMBERS[:one],
-    destination = TransferTo::Base::TEST_NUMBERS[:one],
+    msisdn = TEST_NUMBERS[:one],
+    destination = TEST_NUMBERS[:one],
     product = 3,
     currency = 'USD',
     operator_id = 1310,
