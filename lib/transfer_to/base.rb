@@ -36,7 +36,7 @@ module TransferToApi
     # ------
     # Default: get
     # Determines the type of request issued (get|post).
-    def run_action(name, params = {}, method = :get)
+    def run_action(name, params = {}, method = :post)
       @request.action = name
       @request.params = params
 
