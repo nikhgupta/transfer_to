@@ -1,7 +1,9 @@
 module TransferToApi
   # This is a base class for the TransferTo API
   class Base
-    attr_reader :reply, :request
+    attr_reader :reply, :request,
+    :authentication_key, :error_code, :error_txt, :raw_response
+
 
     # This method initializes the base class for API requests.
     #
@@ -19,6 +21,7 @@ module TransferToApi
       @request = ::TransferToApi::Request.new user, password, aurl
     end
 
+    protected
     # This method can be used to run a specific action against the TransferTo API.
     #
     # parameters
@@ -41,10 +44,18 @@ module TransferToApi
       @request.params = params
 
       @request.run(method).on_complete do |api_reply|
+        @raw_response = api_reply
         reply = ::TransferToApi::Reply.new(api_reply)
         raise ::TransferToApi::Error.new reply.error_code, reply.error_message unless reply.success?
         return reply
       end
     end
+
+    def populate(response)
+      @authentication_key = response.data[:authentication_key]
+      @error_code = response.data[:error_code]
+      @error_txt = response.data[:error_txt]
+    end
+
   end
 end
