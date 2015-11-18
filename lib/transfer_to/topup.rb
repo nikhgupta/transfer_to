@@ -76,7 +76,7 @@ module TransferToApi
         if(response.data[:pin_based] == 'yes')
           return TransferToApi::TopupPin.new(response)
         else
-
+          return TransferToApi::Topup.new(response)
         end
 
         response
@@ -126,12 +126,6 @@ module TransferToApi
 end
 #topup = TransferToApi::Topup.login('rechargeops', 'uGyRrKfyTP').perform('Recharge.com', '628123456770', '0.37', '8705', 'USD', nil, nil, nil, nil, true)  #pinless
 #topup = TransferToApi::Topup.login('rechargeops', 'uGyRrKfyTP').perform('Recharge.com', '628123456710', '0.37', '8705', 'USD', nil, nil, nil, nil, false)  #pin based
-
-
-
-#test = TransferToApi::Topup.new('rechargeops', 'uGyRrKfyTP').perform('Recharge.com', '628123456770', '0.37', '8705', 'USD', nil, nil, nil, nil, true) #pinless
-#test = TransferToApi::Topup.new('rechargeops', 'uGyRrKfyTP').perform('Recharge.com', '628123456710', '0.37', '8705', 'USD', nil, nil, nil, nil, false) #pin based
-
 
 
 
