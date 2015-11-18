@@ -4,12 +4,6 @@ module TransferToApi
     attr_reader :requested_currency, :local_info_currency, :products
 
     def initialize(response)
-       populate(response)
-    end
-
-    protected
-
-    def populate(response)
       @requested_currency = response.data[:requested_currency]
       @local_info_currency = response.data[:local_info_currency]
       product_list = response.data[:product_list].split(',')

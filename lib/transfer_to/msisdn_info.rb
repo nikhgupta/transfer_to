@@ -4,7 +4,7 @@ module TransferToApi
     attr_reader :country_name, :country_id, :operator_name, :operator_id,
       :connection_status, :destination_msisdn, :destination_currency, :open_range
 
-    def get(phone_number, currency = 'USD', operator_id=nil)
+    def self.get(phone_number, currency = 'USD', operator_id=nil)
       params = {
         destination_msisdn: phone_number,
         currency: currency,
@@ -26,9 +26,7 @@ module TransferToApi
       end
     end
 
-    protected
-
-    def populate(response)
+    def initialize(response)
       super(response)
       @country_name = response.data[:country]
       @country_id = response.data[:countryid]
@@ -39,9 +37,10 @@ module TransferToApi
       @destination_currency = response.data[:destination_currency]
       @open_range = response.data[:open_range]
     end
+
   end
 end
-
+# res = TransferToApi::MsisdnInfo.new('rechargeops', 'uGyRrKfyTP').get('628123456770')
 # test = TransferToApi::MsisdnInfo.new('rechargeops', 'uGyRrKfyTP')
 # open_range = test.get('923026282547')
 # fixed = test.get('60172860300')

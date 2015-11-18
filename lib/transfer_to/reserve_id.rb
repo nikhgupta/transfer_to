@@ -17,7 +17,7 @@ module TransferToApi
   end
 end
 
-# test = TransferToApi::ReserveId.new('rechargeops', 'uGyRrKfyTP')
+# test = TransferToApi::ReserveId.new('rechargeops', 'uGyRrKfyTP').get
 
 
 

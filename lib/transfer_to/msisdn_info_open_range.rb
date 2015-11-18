@@ -7,13 +7,6 @@ module TransferToApi
       :requested_currency, :skuid
 
     def initialize(response)
-       populate(response)
-    end
-
-
-    protected
-
-    def populate(response)
       @minimum_amount_local_currency = response.data[:open_range_minimum_amount_local_currency]
       @maximum_amount_local_currency = response.data[:open_range_maximum_amount_local_currency]
       @minimum_amount_requested_currency = response.data[:open_range_minimum_amount_requested_currency]
@@ -23,6 +16,7 @@ module TransferToApi
       @skuid = response.data[:skuid]
       super(response)
     end
+
   end
 end
 

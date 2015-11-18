@@ -3,13 +3,13 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 describe 'Transfer To API Client' do
   # Initialize a constant list with preconfigured test numbers
   before(:all) do
-    TEST_NUMBERS = { one:   "628123456710",
-                     two:   "628123456770",
-                     three: "628123456780",
-                     four:  "628123456781",
-                     five:  "628123456790",
-                     six:   "628123456798",
-                     seven: "628123456799"
+    TEST_NUMBERS = { one:   "628123456710", # error code 0 for PIN based Top-up (successful transaction).
+                     two:   "628123456770", # error code 0 for PIN less Top-up (successful transaction).
+                     three: "628123456780", # error code 204 (destination number is not a valid prepaid phone number).
+                     four:  "628123456781", # error code 301 (input value out of range or invalid product).
+                     five:  "628123456790", # error code 214 (transaction refused by the operator).
+                     six:   "628123456798", # error code 998 (system not available, please retry later).
+                     seven: "628123456799"  # error code 999 (unknown error, please contact support).
                    }
   end
 

@@ -1,27 +1,18 @@
 module TransferToApi
   # This is a base class for the TransferTo API
   class Base
-    attr_reader :reply, :request,
-    :authentication_key, :error_code, :error_txt, :raw_response
 
+    @@username
+    @@password
 
-    # This method initializes the base class for API requests.
-    #
-    # parameters
-    # ==========
-    # user
-    # ----
-    # The username to authenticate for requests.
-    #
-    # password
-    # --------
-    # The password to authenticate for requests.
-    def initialize(user, password)
-      aurl     = "https://fm.transfer-to.com:5443"
-      @request = ::TransferToApi::Request.new user, password, aurl
+    attr_reader :authentication_key, :error_code, :error_txt
+
+    def self.login(username, password)
+      @@username = username
+      @@password = password
+      self
     end
 
-    protected
     # This method can be used to run a specific action against the TransferTo API.
     #
     # parameters
@@ -39,19 +30,21 @@ module TransferToApi
     # ------
     # Default: get
     # Determines the type of request issued (get|post).
-    def run_action(name, params = {}, method = :post)
-      @request.action = name
-      @request.params = params
+    def self.run_action(name, params = {}, method = :post)
+      aurl     = "https://fm.transfer-to.com:5443"
+      request = ::TransferToApi::Request.new @@username, @@password, aurl
 
-      @request.run(method).on_complete do |api_reply|
-        @raw_response = api_reply
+      request.action = name
+      request.params = params
+
+      request.run(method).on_complete do |api_reply|
         reply = ::TransferToApi::Reply.new(api_reply)
         raise ::TransferToApi::Error.new reply.error_code, reply.error_message unless reply.success?
         return reply
       end
     end
 
-    def populate(response)
+    def initialize(response)
       @authentication_key = response.data[:authentication_key]
       @error_code = response.data[:error_code]
       @error_txt = response.data[:error_txt]
