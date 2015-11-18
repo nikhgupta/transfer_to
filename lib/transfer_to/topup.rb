@@ -23,11 +23,11 @@ module TransferToApi
       # ==========
       # msisdn
       # ------
-      # The international phone number of the user requesting to credit
-      # a TransferToAPI phone number. The format must contain the country code,
-      # and will be valid with or without the ‘+’ or ‘00’ placed before it. For
-      # example: “6012345678” or “+6012345678” or “006012345678” (Malaysia) are
-      # all valid.
+      # The international phone number or name of the user requesting to credit
+      # a phone number (sender phone number). The format must contain the country
+      # code, and will be valid with or without the ‘+’ or ‘00’ placed before it.
+      # For example: “6012345678” or “+6012345678” or “006012345678” (Malaysia)
+      # or “John” are all valid. This field must not be empty.
       #
       # product
       # -------
@@ -37,7 +37,10 @@ module TransferToApi
       # destination
       # -----------
       # This is the destination phone number that will be credited with the
-      # amount transferred. Format is similar to “msisdn”.
+      # amount transferred. Format is similar to “msisdn”.The format must contain
+      # the country code, and will be valid with or without the ‘+’ or ‘00’
+      # placed before it. For example: “6012345678” or “+6012345678” or
+      # “006012345678” (Malaysia) are all valid.
       #
       # operator_id
       # -----------

@@ -40,10 +40,11 @@ module TransferToApi
 
   end
 end
-# res = TransferToApi::MsisdnInfo.new('rechargeops', 'uGyRrKfyTP').get('628123456770')
-# test = TransferToApi::MsisdnInfo.new('rechargeops', 'uGyRrKfyTP')
-# open_range = test.get('923026282547')
-# fixed = test.get('60172860300')
+
+# info = TransferToApi::MsisdnInfo.login('rechargeops', 'uGyRrKfyTP').get('628123456770')
+# info = TransferToApi::MsisdnInfo.login('rechargeops', 'uGyRrKfyTP').get('923026282547') # open range
+# info = TransferToApi::MsisdnInfo.login('rechargeops', 'uGyRrKfyTP').get('60172860300') # fixed denomination
+
 
 # OPEN RANGE
 # :country=>"Pakistan",
