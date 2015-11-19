@@ -15,7 +15,7 @@ module TransferToApi
 
       @products = []
       product_list.count.times do |count|
-        @products << TransferToApi::FixedProduct.new(
+        @products << TransferToApi::MsisdnFixedProduct.new(
           product_list[count],
           retail_price_list[count],
           wholesale_price_list[count],

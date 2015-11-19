@@ -1,5 +1,5 @@
 module TransferToApi
-  class FixedProduct
+  class MsisdnFixedProduct
     attr_reader :product, :retail_price, :wholesale_price, :skuid, :local_value,
     :local_amount
 
@@ -11,6 +11,6 @@ module TransferToApi
       @local_value = local_value
       @local_amount = local_amount
     end
-    
+
   end
 end

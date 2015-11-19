@@ -130,6 +130,8 @@ end
 #topup = TransferToApi::Topup.login('rechargeops', 'uGyRrKfyTP').perform('Recharge.com', '628123456770', '0.37', '8705', 'USD', nil, nil, nil, nil, true)  #pinless
 #topup = TransferToApi::Topup.login('rechargeops', 'uGyRrKfyTP').perform('Recharge.com', '628123456710', '0.37', '8705', 'USD', nil, nil, nil, nil, false)  #pin based
 
+# topup = TransferToApi::Topup.login('rechargeops', 'uGyRrKfyTP').perform('Recharge.com', '60172860300', '1.58', '7499', 'USD', nil, nil, nil, nil, true) # fixed denomination
+
 
 
 
