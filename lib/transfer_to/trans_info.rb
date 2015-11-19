@@ -1,5 +1,5 @@
 module TransferToApi
-  class ReserveId < Base
+  class TransInfo < Base
 
     attr_reader :reserved_id
 
@@ -14,3 +14,8 @@ module TransferToApi
     end
   end
 end
+
+# test = TransferToApi::ReserveId.login('rechargeops', 'uGyRrKfyTP').get
+
+
+

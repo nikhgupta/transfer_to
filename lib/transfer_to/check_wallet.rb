@@ -20,9 +20,3 @@ module TransferToApi
     end
   end
 end
-
-# wallet = TransferToApi::CheckWallet.login('rechargeops', 'uGyRrKfyTP').get
-# => {:type=>"Master", :login=>"rechargeops", :currency=>"USD", :balance=>"30.00", :wallet=>"30.00", :authentication_key=>"1447841914", :error_code=>0, :error_txt=>"Transaction successful"}
-
-
-
