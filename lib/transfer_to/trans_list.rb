@@ -52,6 +52,3 @@ module TransferToApi
     end
   end
 end
-
-# list = TransferToApi::TransList.login('rechargeops', 'uGyRrKfyTP').get('2015-11-01', '2015-11-20')
-
