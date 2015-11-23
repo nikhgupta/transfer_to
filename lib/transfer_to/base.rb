@@ -37,11 +37,23 @@ module TransferToApi
       request.action = name
       request.params = params
 
-      request.run(method).on_complete do |api_reply|
-        reply = ::TransferToApi::Reply.new(api_reply)
-        raise ::TransferToApi::Error.new reply.error_code, reply.error_message unless reply.success?
-        return reply
+      reply = nil
+      begin
+        request.run(method).on_complete do |api_reply|
+          reply = ::TransferToApi::Reply.new(api_reply)
+        end
+      rescue Faraday::TimeoutError => e
+        raise TransferToApi::TimeoutException.new(e)
+      rescue Faraday::ResourceNotFound => e
+        raise TransferToApi::ResourceNotFound.new(e)
+      rescue
+        raise TransferToApi::ConnectionException.new(e)
       end
+
+      raise TransferToApi::CommandException.new reply.error_code, reply.error_message unless reply.success?
+
+      return reply
+
     end
 
     def initialize(response)

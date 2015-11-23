@@ -16,6 +16,3 @@ module TransferToApi
     end
   end
 end
-
-# list = TransferToApi::GetIdFromKey.login('rechargeops', 'uGyRrKfyTP').get('1448007022')
-

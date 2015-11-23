@@ -4,7 +4,7 @@ require 'ostruct'
 
 # require transfer_to files..
 require "transfer_to/version"
-require "transfer_to/errors"
+require "transfer_to/command_exception"
 require "transfer_to/request"
 require "transfer_to/reply"
 require "transfer_to/base"
@@ -27,3 +27,4 @@ require "transfer_to/country"
 require "transfer_to/operator"
 require "transfer_to/trans_list"
 require "transfer_to/get_id_from_key"
+require "transfer_to/connection_exception"
