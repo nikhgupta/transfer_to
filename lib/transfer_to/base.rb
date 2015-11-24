@@ -5,7 +5,7 @@ module TransferToApi
     @@username
     @@password
 
-    attr_reader :authentication_key, :error_code, :error_txt
+    attr_reader :authentication_key, :error_code, :error_txt, :raw_response
 
     def self.login(username, password)
       @@username = username
@@ -34,6 +34,8 @@ module TransferToApi
       aurl     = "https://fm.transfer-to.com:5443"
       request = ::TransferToApi::Request.new @@username, @@password, aurl
 
+      # CgConfig::TRANSFER2[:bla]
+
       request.action = name
       request.params = params
 
@@ -60,6 +62,8 @@ module TransferToApi
       @authentication_key = response.data[:authentication_key]
       @error_code = response.data[:error_code]
       @error_txt = response.data[:error_txt]
+      @raw_response = response.raw_response
+      
     end
 
   end

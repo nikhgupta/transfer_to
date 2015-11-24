@@ -23,8 +23,9 @@ module TransferToApi
     # This method sets up the authentication parameters.
     def authenticate
       time = Time.now.to_i.to_s
-      add_param :key,   time
-      add_param :md5,   md5_hash(@user + @pass + time.to_s)
+      key = time + Random.rand(9999999999).to_s
+      add_param :key,   key
+      add_param :md5,   md5_hash(@user + @pass + key)
       add_param :login, @user
     end
 

@@ -4,6 +4,9 @@ module TransferToApi
     attr_reader :country_name, :country_id, :operator_name, :operator_id,
       :connection_status, :destination_msisdn, :destination_currency, :open_range
 
+    # This method is used to retrieve various information of a specific MSISDN
+    # (operator, country…) as well as the list of all products configured for
+    # your specific account and the destination operator of the MSISDN.
     def self.get(phone_number, currency = 'USD', operator_id=nil)
       params = {
         destination_msisdn: phone_number,

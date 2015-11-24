@@ -3,6 +3,8 @@ module TransferToApi
   # TransferTo API.
   class Reply
 
+    attr_reader :raw_response
+
     # This method initializes a new Reply.
     #
     # parameters
@@ -12,6 +14,7 @@ module TransferToApi
     # The reply as received from Faraday's request.
     def initialize(reply)
       @response = OpenStruct.new reply.to_hash
+      @raw_response = reply
     end
 
     # Starts a pry session for debugging purposes.

@@ -12,7 +12,12 @@ module TransferToApi
     :open_range_local_currency, :open_range_requested_amount, :open_range_requested_currency,
     :open_range_wholesale_cost, :open_range_wholesale_currency,
     :open_range_wholesale_discount, :open_range_wholesale_rate
-
+    
+    # This method can be used to retrieve available information on a specific
+    # transaction. Please note that values of “input_value” and
+    # “debit_amount_validated” are rounded to 2 digits after the comma but are
+    # the same as the values returned in the fields “input_value” and
+    # “validated_input_value” of the “topup” method response.
     def self.get(transaction_id)
       params = {transactionid: transaction_id}
       response = run_action :trans_info, params
@@ -64,9 +69,7 @@ module TransferToApi
   end
 end
 
-#60172860300
-# info = TransferToApi::MsisdnInfo.login('rechargeops', 'uGyRrKfyTP').get('60172860300')
-# topup = TransferToApi::Topup.login('rechargeops', 'uGyRrKfyTP').perform('Recharge.com', '60172860300', '1.62', '7499', 'USD')
+
 
 # test = TransferToApi::TransInfo.login('rechargeops', 'uGyRrKfyTP').get('428661615')   # open range transaction
 #  :transactionid=>"428661615",
@@ -110,6 +113,8 @@ end
 #  :error_txt=>"Transaction successful"
 
 
+# info = TransferToApi::MsisdnInfo.login('rechargeops', 'uGyRrKfyTP').get('60172860300')
+# topup = TransferToApi::Topup.login('rechargeops', 'uGyRrKfyTP').perform('Recharge.com', '60172860300', '1.62', '7499', 'USD')
 # test = TransferToApi::TransInfo.login('rechargeops', 'uGyRrKfyTP').get('428796615')   # pin transaction
 
 # [2] pry(#<RSpec::ExampleGroups::TransferToAPIClient>)> test.data
