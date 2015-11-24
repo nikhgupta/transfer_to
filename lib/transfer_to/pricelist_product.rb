@@ -1,12 +1,9 @@
 module TransferToApi
   class Product
-    attr_reader :country, :country_id, :operator_name, :operator_id, :destination_currency
+    attr_reader :operator, :destination_currency
 
     def initialize(response)
-      @country = response.data[:country]
-      @country_id = response.data[:countryid]
-      @operator_name = response.data[:operator]
-      @operator_id = response.data[:operatorid]
+      @operator = TransferToApi::Operator.new(response.data[:country], response.data[:countryid], response.data[:operator], response.data[:operatorid])
       @destination_currency = response.data[:destination_currency]
     end
   end

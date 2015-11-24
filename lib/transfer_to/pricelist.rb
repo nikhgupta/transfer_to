@@ -1,6 +1,7 @@
 module TransferToApi
   class Pricelist < Base
 
+    attr_reader :countries, :operators, :products
     attr_writer :countries, :operators, :products
 
     # This method is used to retrieve coverage and pricelist offered to you.
@@ -52,7 +53,7 @@ module TransferToApi
 
       operators = []
       operator_name_list.count.times do |count|
-        operators << TransferToApi::Operator.new(operator_name_list[count], operator_id_list[count])
+        operators << TransferToApi::Operator.new(response.data[:country], response.data[:countryid], operator_name_list[count], operator_id_list[count])
       end
 
       pricelist.operators = operators
