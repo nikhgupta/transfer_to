@@ -9,6 +9,14 @@ module TransferToApi
     #
     # parameters
     # ==========
+    # start_date
+    # ----------
+    # Defines the start date of the search. Format must be YYYY-MM-DD.
+    #
+    # stop_date
+    # ---------
+    # Defines the end date of the search (included). Format must be YYYY-MM-DD.
+    #
     # msisdn
     # ------
     # The format must be international with or without the ‘+’ or ‘00’:
@@ -25,13 +33,6 @@ module TransferToApi
     # only all successful transactions. If left empty, all transactions will be
     # returned(Failed and successful).
     #
-    # start_date
-    # ----------
-    # Defines the start date of the search. Format must be YYYY-MM-DD.
-    #
-    # stop_date
-    # ---------
-    # Defines the end date of the search (included). Format must be YYYY-MM-DD.
     def self.get(start_date, end_date, msisdn=nil, destination=nil, code=nil)
       params = { }
 

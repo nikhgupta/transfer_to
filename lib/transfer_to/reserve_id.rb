@@ -2,7 +2,7 @@ module TransferToApi
   class ReserveId < Base
 
     attr_reader :reserved_id
-    
+
     # This method is used to reserve an ID in the system. This ID can then be
     # used in the “topup” or “simulation” requests.
     # This way, your system knows the IDof the transaction before sending the
@@ -14,7 +14,7 @@ module TransferToApi
 
     def initialize(response)
       super(response)
-      @reserved_id = response.data[:reserve_id]
+      @reserved_id = response.data[:reserved_id]
     end
   end
 end

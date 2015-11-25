@@ -1,10 +1,9 @@
 module TransferToApi
   class Topup < Base
 
-    attr_reader :transaction_id, :msisdn, :destination_msisdn, :country_name,
-    :country_id, :operator_name, :operator_id, :reference_operator,
-    :originating_currency, :destination_currency, :wholesale_price, :retail_price,
-    :service_fee, :balance,
+    attr_reader :operator, :transaction_id, :msisdn, :destination_msisdn,
+    :reference_operator, :originating_currency, :destination_currency,
+    :wholesale_price, :retail_price, :service_fee, :balance,
     :sms_sent, :sms,:cid1, :cid2, :cid3, :reference_operator, :info_txt, :open_range,
     :open_range_local_amount_delivered, :open_range_local_amount_requested,
     :open_range_local_currency, :open_range_requested_amount,
@@ -21,18 +20,13 @@ module TransferToApi
       #
       # parameters
       # ==========
-      # msisdn
+      # sender
       # ------
       # The international phone number or name of the user requesting to credit
       # a phone number (sender phone number). The format must contain the country
       # code, and will be valid with or without the ‘+’ or ‘00’ placed before it.
       # For example: “6012345678” or “+6012345678” or “006012345678” (Malaysia)
       # or “John” are all valid. This field must not be empty.
-      #
-      # product
-      # -------
-      # This field is used to define the remote product(often, the same as the
-      # amount in destination currency) to use in the request.
       #
       # destination
       # -----------
@@ -41,6 +35,11 @@ module TransferToApi
       # the country code, and will be valid with or without the ‘+’ or ‘00’
       # placed before it. For example: “6012345678” or “+6012345678” or
       # “006012345678” (Malaysia) are all valid.
+      #
+      # amount
+      # -------
+      # This field is used to define the remote product to use in the request.
+      # This is the amount to topup, requested in the account currency.
       #
       # operator_id
       # -----------
@@ -55,9 +54,9 @@ module TransferToApi
       # ----------
       # Default: false
       # Sends the topup request without doing the actual topup.
-      def self.perform(msisdn, destination, product, skuid, currency = 'USD', reserved_id = nil,
+      def self.perform(sender, destination, amount, skuid, currency = 'USD', reserved_id = nil,
                 recipient_sms = nil, sender_sms = nil, operator_id = nil, simulate = false)
-        params = { skuid: skuid, msisdn: msisdn, destination_msisdn: destination, product: product }
+        params = { skuid: skuid, msisdn: sender, destination_msisdn: destination, product: amount }
 
         params.merge!({
           cid1: "", cid2: "", cid3: "",
@@ -87,13 +86,12 @@ module TransferToApi
 
     def initialize(response)
       super(response)
+
+      @operator = TransferToApi::Operator.new(response.data[:country], response.data[:countryid], response.data[:operator], response.data[:operatorid])
+
       @transaction_id = response.data[:transactionid]
       @msisdn = response.data[:msisdn]
       @destination_msisdn = response.data[:destination_msisdn]
-      @country_name = response.data[:country]
-      @country_id = response.data[:countryid]
-      @operator_name = response.data[:operator]
-      @operator_id = response.data[:operatorid]
       @reference_operator = response.data[:reference_operator]
       @originating_currency = response.data[:originating_currency]
       @destination_currency = response.data[:destination_currency]

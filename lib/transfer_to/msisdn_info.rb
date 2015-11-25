@@ -1,8 +1,7 @@
 module TransferToApi
   class MsisdnInfo < Base
 
-    attr_reader :country_name, :country_id, :operator_name, :operator_id,
-      :connection_status, :destination_msisdn, :destination_currency, :open_range
+    attr_reader :operator, :connection_status, :destination_msisdn, :destination_currency, :open_range
 
     # This method is used to retrieve various information of a specific MSISDN
     # (operator, country…) as well as the list of all products configured for
@@ -31,10 +30,7 @@ module TransferToApi
 
     def initialize(response)
       super(response)
-      @country_name = response.data[:country]
-      @country_id = response.data[:countryid]
-      @operator_name = response.data[:operator]
-      @operator_id = response.data[:operatorid]
+      @operator = TransferToApi::Operator.new(response.data[:country], response.data[:countryid], response.data[:operator], response.data[:operatorid])
       @connection_status = response.data[:connection_status]
       @destination_msisdn = response.data[:destination_msisdn]
       @destination_currency = response.data[:destination_currency]

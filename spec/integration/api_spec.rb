@@ -1,247 +1,251 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe 'Transfer To API Client' do
-  # Initialize a constant list with preconfigured test numbers
-  before(:all) do
-    TEST_NUMBERS = { one:   "628123456710", # error code 0 for PIN based Top-up (successful transaction).
-                     two:   "628123456770", # error code 0 for PIN less Top-up (successful transaction).
-                     three: "628123456780", # error code 204 (destination number is not a valid prepaid phone number).
-                     four:  "628123456781", # error code 301 (input value out of range or invalid product).
-                     five:  "628123456790", # error code 214 (transaction refused by the operator).
-                     six:   "628123456798", # error code 998 (system not available, please retry later).
-                     seven: "628123456799"  # error code 999 (unknown error, please contact support).
-                   }
-  end
 
   before do
     begin
      lines = File.readlines(File.expand_path(File.dirname(__FILE__) + '/../credentials.txt'))
-     acc = lines[0].chomp
-     pwd = lines[1].chomp
-     @client = TransferToApi::Client.new(acc, pwd)
+     @user = lines[0].chomp
+     @pass = lines[1].chomp
     rescue => e
       puts "#{e} Could not read credentials"
       raise
     end
+
+    # open range stuff are actual test numbers. We can topup this number safely.
+    @open_range_country_id = '767'
+    @open_range_operator_id = '1310'
+    @open_range_country_name = 'Indonesia'
+    @open_range_product_name = 'AAA-TESTING Indonesia'
+    @open_range_phone_number = '628123456770'
+
+    # this is not an official test number. Do not topup this number!
+    @fixed_denomination_operator_id = '385'
+    @fixed_denomination_country_id = '799'
+    @fixed_denomination_operator_name = 'Maxis Malaysia'
+    @fixed_denomination_phone_number = '60172860300'
+
+    #this is an actual test number. We can topup this number safely.
+    @pin_based_phone_number = "628123456710"
+
+    # error numbers
+    @error_204_phone_number = '628123456780'
+    @error_301_phone_number = '628123456781'
+    @error_214_phone_number = '628123456790'
+    @error_998_phone_number = '628123456798'
+    @error_999_phone_number = '628123456799'
+
+    # real transactions that have been performed because they couldn't be
+    # tested otherwise.
+    @pin_based_transaction_id = '429880264'
+    @pin_based_transaction_authentication_key = '14484522647113573979'
+    @pinless_transaction_id = '428661615'
   end
 
-  it 'dummy test' do
-    binding.pry
+  context '#pricelist' do
+    it 'should return a list of countries' do
+      pricelist = TransferToApi::Pricelist.login(@user, @pass).get_countries
+      expect(pricelist.error_code).to eq 0
+      expect(pricelist.countries.length).to be > 10
+
+      country = pricelist.countries.detect { |n| n.id == @open_range_country_id}
+      expect(country.name).to eq @open_range_country_name
+    end
+
+    it 'with country should return a list of operators for that country' do
+      pricelist = TransferToApi::Pricelist.login(@user, @pass).get_operators_for_country(@open_range_country_id)
+      expect(pricelist.error_code).to eq 0
+      expect(pricelist.operators.length).to be > 5
+
+      operator = pricelist.operators.detect { |n| n.id == @open_range_operator_id}
+      expect(operator.country.name).to eq @open_range_country_name
+      expect(operator.name).to eq @open_range_product_name
+    end
+
+    it 'with an open range operator should return a list of open range products' do
+      pricelist = TransferToApi::Pricelist.login(@user, @pass).get_products_for_operator(@open_range_operator_id)
+      expect(pricelist.error_code).to eq 0
+      expect(pricelist.products.length).to eq 1
+
+      product = pricelist.products.first
+      expect(product.class).to eq TransferToApi::PricelistOpenRangeProduct
+      expect(product.operator.country.id).to eq @open_range_country_id
+      expect(product.open_range).to eq "1"
+      expect(product.operator.name).to eq @open_range_product_name
+    end
+
+    it 'with an fixed denomination operator should return a list of fixed denomination products' do
+      pricelist = TransferToApi::Pricelist.login(@user, @pass).get_products_for_operator(@fixed_denomination_operator_id)
+      expect(pricelist.error_code).to eq 0
+      expect(pricelist.products.length).to be > 3
+
+      product = pricelist.products.first
+      expect(product.class).to eq TransferToApi::PricelistFixedProduct
+      expect(product.operator.country.id).to eq @fixed_denomination_country_id
+      expect(product.operator.name).to eq @fixed_denomination_operator_name
+    end
   end
-  #
-  # # region Metric Tests
-  # it 'should send a ping and receive pong' do
-  #   expect(@client.ping.data[:info_txt]).to eq 'pong'
-  # end
-  # # end region
-  #
-  # # region Account Tests
-  # it 'should send pricelist and receive a list of countries' do
-  #   expect(@client.pricelist('countries').data[:error_code]).to eq 0
-  # end
-  #
-  # it 'should send pricelist with country and receive a list of operators for that country' do
-  #   r = @client.pricelist('country', 767)
-  #   expect(r.data[:country]).to eq 'Indonesia'
-  # end
-  #
-  # it 'should send pricelist with operator and receive a list of products for that operator' do
-  #   r = @client.pricelist('country', 767)
-  #   operators = r.data[:operatorid]
-  #   ops = operators.split(',')
-  #
-  #   # puts ""
-  #   # puts "starting pricelist"
-  #   # ops.each do |op_code|
-  #   #   puts " Operator #{op_code}"
-  #   #   r = @client.pricelist('operator', op_code)
-  #   #   puts " Products: #{r.data[:product_list]}"
-  #   # end
-  #   operator_id = 1411
-  #   r = @client.pricelist('operator', 1411)
-  #   expect_succesfull_response r
-  # end
-  # # end region
-  #
-  # # region Basics Tests
-  # it 'should send msisdn_info with number and receive information about the carrier' do
-  #   response = @client.msisdn_info(TEST_NUMBERS[:one], 'USD')
-  #
-  #   expect_succesfull_response response
-  #   expect(response.data[:country]).to eq 'Indonesia'
-  # end
-  #
-  # it 'should send msisdn_info with number and receive information about the carrier' do
-  #   response = @client.msisdn_info(TEST_NUMBERS[:one], 'USD')
-  #
-  #   expect_succesfull_response response
-  #   expect(response.data[:country]).to eq 'Indonesia'
-  # end
-  #
-  # it 'should send a reservation and receive a transaction id' do
-  #   response = @client.reserve_id
-  #
-  #   expect_succesfull_response response
-  #   expect(response.data[:reserved_id]).not_to eq nil
-  # end
-  #
-  # it 'should simulate a topup and receive response' do
-  #   response, rid = create_topup_simulation true
-  #
-  #   expect_succesfull_response response
-  # end
-  #
-  # it 'should simulate a topup and respond to PIN based Operators' do
-  #   response, rid = create_topup_simulation true, TEST_NUMBERS[:one], TEST_NUMBERS[:one]
-  #
-  #   expect_succesfull_response response
-  # end
-  #
-  # it 'should simulate a PIN based operator and respond with all corresponding fields' do
-  #   response, rid = create_topup_simulation true, TEST_NUMBERS[:one], TEST_NUMBERS[:one]
-  #
-  #   expect_succesfull_response response
-  #   expect_PIN_based_response_fields response
-  # end
-  #
-  # it 'should simulate a topup and respond to PIN less Operators' do
-  #   response, rid = create_topup_simulation true, TEST_NUMBERS[:two], TEST_NUMBERS[:two]
-  #
-  #   expect_succesfull_response response
-  #   expect(response.data[:authentication_key]).not_to eq nil
-  # end
-  #
-  # it 'should simulate a PIN less based operator and respond with all corresponding fields' do
-  #   response, rid = create_topup_simulation true, TEST_NUMBERS[:two], TEST_NUMBERS[:two]
-  #
-  #   expect_PIN_less_response_fields response
-  # end
-  #
-  # it 'should simulate a topup and throw a destination number is not a prepaid phone number error' do
-  #   expect {
-  #     create_topup_simulation false, TEST_NUMBERS[:three], TEST_NUMBERS[:three]
-  #   }.to raise_exception(TransferToApi::Error){|ex| expect(ex.code).to eq 204}
-  # end
-  #
-  # it 'should simulate a topup and throw an invalid product error' do
-  #   expect {
-  #       create_topup_simulation false, TEST_NUMBERS[:four], TEST_NUMBERS[:four]
-  #   }.to raise_exception(TransferToApi::Error){|ex| expect(ex.code).to eq 301}
-  # end
-  #
-  # it 'should simulate a topup and throw a transaction refused error' do
-  #     expect {
-  #       create_topup_simulation false, TEST_NUMBERS[:five], TEST_NUMBERS[:five]
-  #     }.to raise_exception(TransferToApi::Error){|ex| expect(ex.code).to eq 214 }
-  # end
-  #
-  # it 'should simulate a topup and throw a system unavailable error' do
-  #   expect {
-  #     create_topup_simulation false, TEST_NUMBERS[:six], TEST_NUMBERS[:six]
-  #   }.to raise_exception(TransferToApi::Error) {|ex| expect(ex.code).to eq 998 }
-  # end
-  #
-  # it 'should simulate a topup and throw an unknown error' do
-  #   expect {
-  #     create_topup_simulation false, TEST_NUMBERS[:seven], TEST_NUMBERS[:seven]
-  #   }.to raise_exception(TransferToApi::Error) {|ex| expect(ex.code).to eq 999 }
-  # end
-  # # end region
-  #
-  # # region Reports Tests
-  # it 'should return the list of transactions performed during a given date range' do
-  #   response = @client.trans_list Date.today.prev_day.to_s, Date.today.to_s
-  #
-  #   expect_succesfull_response response
-  # end
-  #
-  # it 'should return all available information on a specific transaction id' do
-  #   topup_response, reserved_id = create_topup_simulation true
-  #   expect_succesfull_response topup_response
-  #
-  #   response = @client.trans_info reserved_id
-  #   expect_succesfull_response response
-  # end
-  # # end region
-  #
-  # #### Test helpers ####
-  # def create_reservation()
-  #   response = @client.reserve_id
-  #
-  #   expect_succesfull_response response
-  #   expect(response.data[:reserved_id]).not_to eq nil
-  #   return response
-  # end
-  #
-  # def create_topup_simulation(
-  #   simulate,
-  #   msisdn = TEST_NUMBERS[:one],
-  #   destination = TEST_NUMBERS[:one],
-  #   product = 3,
-  #   currency = 'USD',
-  #   operator_id = 1310,
-  #   recipient_sms = nil,
-  #   sender_sms = nil)
-  #
-  #   puts ""
-  #   puts "starting simulation .."
-  #
-  #   # Retrieves information about the MSISDN
-  #   info_response = @client.msisdn_info(msisdn, currency, operator_id)
-  #   expect_succesfull_response info_response
-  #   sku_id = info_response.data[:skuid]
-  #   operatorid = info_response.data[:operatorid]
-  #
-  #   puts " product: #{product}"
-  #   puts " SKU ID: #{sku_id}"
-  #   puts " Operator ID: #{operatorid}"
-  #
-  #   # Creates a reservation id
-  #   reservation_response = create_reservation
-  #   expect_succesfull_response reservation_response
-  #   reserved_id = reservation_response.data[:reserved_id]
-  #
-  #   puts " Transaction ID: #{reserved_id}"
-  #
-  #   # Uses the reservation id to simulate a topup
-  #   response = @client.topup(msisdn, destination, product, sku_id, currency,
-  #     reserved_id, recipient_sms, sender_sms, operator_id, simulate)
-  #
-  #   return response, reserved_id
-  # end
-  #
-  # def expect_succesfull_response(response)
-  #   expect(response.data).not_to eq nil
-  #   expect(response.data[:error_code]).to eq 0
-  #   expect(response.data[:error_txt]).to eq "Transaction successful"
-  # end
-  #
-  # def expect_PIN_less_response_fields(response)
-  #   expect(response.data[:skuid]).not_to eq nil
-  #   expect(response.data[:country]).not_to eq nil
-  #   expect(response.data[:countryid]).not_to eq nil
-  #   expect(response.data[:operator]).not_to eq nil
-  #   expect(response.data[:operatorid]).not_to eq nil
-  #   expect(response.data[:destination_msisdn]).not_to eq nil
-  #   expect(response.data[:destination_currency]).not_to eq nil
-  #   expect(response.data[:msisdn]).not_to eq nil
-  #   expect(response.data[:originating_currency]).not_to eq nil
-  #   expect(response.data[:wholesale_price]).not_to eq nil
-  #   expect(response.data[:retail_price]).not_to eq nil
-  #   expect(response.data[:service_fee]).not_to eq nil
-  #   expect(response.data[:balance]).not_to eq nil
-  #   expect(response.data[:return_timestamp]).not_to eq nil
-  #   expect(response.data[:return_version]).not_to eq nil
-  # end
-  #
-  # def expect_PIN_based_response_fields(response)
-  #   expect_PIN_less_response_fields response
-  #
-  #   # expect(response.data[:pin_based]).not_to eq nil
-  #   # expect(response.data[:pin_validity]).not_to eq nil
-  #   # expect(response.data[:pin_code]).not_to eq nil
-  #   # expect(response.data[:pin_ivr]).not_to eq nil
-  #   # expect(response.data[:pin_serial]).not_to eq nil
-  #   # expect(response.data[:pin_value]).not_to eq nil
-  # end
+
+  context '#msisdn_info' do
+    it 'for an open range carrier should return open range information' do
+      info = TransferToApi::MsisdnInfo.login(@user, @pass).get(@open_range_phone_number)
+      expect(info.error_code).to eq 0
+
+      expect(info.operator.country.id).to eq @open_range_country_id
+      expect(info.operator.id).to eq @open_range_operator_id
+      expect(info.class).to eq TransferToApi::MsisdnInfoOpenRange
+    end
+
+    it 'for an fixed denomination carrier should return fixed denomination information' do
+      info = TransferToApi::MsisdnInfo.login(@user, @pass).get(@fixed_denomination_phone_number)
+      expect(info.error_code).to eq 0
+
+      expect(info.operator.country.id).to eq @fixed_denomination_country_id
+      expect(info.operator.id).to eq @fixed_denomination_operator_id
+      expect(info.class).to eq TransferToApi::MsisdnInfoFixedDenomination
+    end
+  end
+
+  context '#reserve id' do
+    it 'should receive a transaction id' do
+      reserve_id = TransferToApi::ReserveId.login(@user, @pass).get
+      expect(reserve_id.error_code).to eq 0
+      expect(reserve_id.reserved_id).to match(/^[0-9]{8}[0-9]*$/)
+    end
+  end
+
+  context '#topup' do
+    it 'on a pinless operator should perform a pinless topup' do
+      info = TransferToApi::MsisdnInfo.login(@user, @pass).get(@open_range_phone_number)
+      expect(info.error_code).to eq 0
+
+      topup = TransferToApi::Topup.login(@user, @pass).perform('Recharge.com', @open_range_phone_number, info.minimum_amount_requested_currency, info.skuid, info.requested_currency, nil, nil, nil, nil, true)
+      expect(topup.error_code).to eq 0
+      expect(topup.destination_msisdn).to eq @open_range_phone_number
+      expect(topup.local_info_amount).to eq info.minimum_amount_local_currency
+      expect(topup.skuid).to eq info.skuid
+      expect(topup.open_range_requested_amount).to eq info.minimum_amount_requested_currency
+      expect(topup.operator.country.id).to eq @open_range_country_id
+      expect(topup.operator.id).to eq @open_range_operator_id
+      expect(topup.class).to eq TransferToApi::Topup
+      expect { topup.pin_based }.to raise_error(NoMethodError)
+      expect { topup.pin_code }.to raise_error(NoMethodError)
+    end
+
+    it 'on a pin based operator should perform a pin based topup' do
+      info = TransferToApi::MsisdnInfo.login(@user, @pass).get(@pin_based_phone_number)
+      expect(info.error_code).to eq 0
+
+      topup = TransferToApi::Topup.login(@user, @pass).perform('Recharge.com', @pin_based_phone_number, info.minimum_amount_requested_currency, info.skuid, info.requested_currency)
+      expect(topup.error_code).to eq 0
+      expect(topup.destination_msisdn).to eq @pin_based_phone_number
+      expect(topup.local_info_amount).to eq info.minimum_amount_local_currency
+      expect(topup.skuid).to eq info.skuid
+      expect(topup.open_range_requested_amount).to eq info.minimum_amount_requested_currency
+      expect(topup.operator.country.id).to eq @open_range_country_id
+      expect(topup.operator.id).to eq @open_range_operator_id
+      expect(topup.class).to eq TransferToApi::TopupPin
+      expect(topup.pin_based).to eq 'yes'
+      expect(topup.pin_code).to match(/^[0-9]{4}[0-9]*$/)
+    end
+
+    it 'on a fixed denomination operator should successfully a topup' do
+      info = TransferToApi::MsisdnInfo.login(@user, @pass).get(@fixed_denomination_phone_number)
+      expect(info.error_code).to eq 0
+
+      topup = TransferToApi::Topup.login(@user, @pass).perform('Recharge.com', @fixed_denomination_phone_number, info.products.first.product, info.products.first.skuid, info.requested_currency, nil, nil, nil, nil, true)
+      expect(topup.error_code).to eq 0
+      expect(topup.destination_msisdn).to eq @fixed_denomination_phone_number
+      expect(topup.local_info_amount).to eq info.products.first.local_amount
+      expect(topup.skuid).to eq info.products.first.skuid
+      expect(topup.open_range_requested_amount).to eq info.products.first.product
+      expect(topup.operator.country.id).to eq info.operator.country.id
+      expect(topup.operator.id).to eq info.operator.id
+      expect(topup.class).to eq TransferToApi::Topup
+      expect { topup.pin_based }.to raise_error(NoMethodError)
+      expect { topup.pin_code }.to raise_error(NoMethodError)
+    end
+  end
+
+  context '#test topup errors should try a topup and throw error' do
+    it 'no valid prepaid number' do
+      test_error(@error_204_phone_number, TransferToApi::CommandException::NO_VALID_PREPAID_NR)
+    end
+
+    it 'denomination not available' do
+      test_error(@error_301_phone_number, TransferToApi::CommandException::DENOMINATION_NOT_AVAILABLE)
+    end
+
+    it 'transaction refused' do
+      test_error(@error_214_phone_number, TransferToApi::CommandException::TOPUP_REFUSED)
+    end
+
+    it 'system unavailable' do
+      test_error(@error_998_phone_number, TransferToApi::CommandException::SYSTEM_NOT_AVAILABLE)
+
+    end
+
+    it 'unknown error' do
+      test_error(@error_999_phone_number, TransferToApi::CommandException::UNKNOWN_ERROR)
+    end
+
+    def test_error(error_phone_number, expected_exception_code)
+      expect {
+        info = TransferToApi::MsisdnInfo.login(@user, @pass).get(error_phone_number)
+        expect(info.error_code).to eq 0
+        topup = TransferToApi::Topup.login(@user, @pass).perform('Recharge.com', error_phone_number, info.minimum_amount_requested_currency, info.skuid, info.requested_currency)
+      }.to raise_exception(TransferToApi::CommandException){|ex| expect(ex.code).to eq expected_exception_code}
+    end
+  end
+
+  context '#trans_list' do
+    it 'should return a list of transactions' do
+      list = TransferToApi::TransList.login(@user, @pass).get('2015-11-01', '2015-11-10')
+      expect(list.error_code).to eq 0
+      expect(list.transaction_ids.count).to be > 3
+    end
+  end
+
+  context '#trans_info' do
+    # we can only test trans_info for topups that have really been performed.
+    # As a real topup costs money, we can not perform a topup every time the tests
+    # run. Whe therefore use hardcoded previously executed topups.
+    it 'should return information about a pinless transaction' do
+      info = TransferToApi::TransInfo.login(@user, @pass).get(@pinless_transaction_id)
+      expect(info.error_code).to eq 0
+      expect(info.actual_product_sent).to eq '50.22'
+      expect(info.pin_based).to eq 'no'
+      expect(info.operator.id).to eq '400'
+      expect(info.class).to eq TransferToApi::TransInfo
+    end
+
+    it 'should return information about a pin transaction' do
+      info = TransferToApi::TransInfo.login(@user, @pass).get(@pin_based_transaction_id)
+      expect(info.error_code).to eq 0
+      expect(info.actual_product_sent).to eq '200'
+      expect(info.pin_based).to eq 'yes'
+      expect(info.operator.id).to eq '1553'
+      expect(info.class).to eq TransferToApi::TransInfoPin
+      expect(info.pin_code).to eq '7626938502549280'
+    end
+
+    # optional: tests with information about failed transactions.
+    #"425369915", "425369954", "425369882", "425370005", "425370052", "425494271", "425494299", "425494333", "425494398", "425494360"]
+  end
+
+  context '#get_id_from_key' do
+    # we can only get id from key of actual transactions. We therefore have to
+    # test against previously done real transactions.
+    it 'should return the transaction-id based from an authentication_key' do
+      id_from_key = TransferToApi::GetIdFromKey.login(@user, @pass).get(@pin_based_transaction_authentication_key)
+      expect(id_from_key.error_code).to eq 0
+      expect(id_from_key.transaction_id).to eq @pin_based_transaction_id
+    end
+  end
+
+  context '#check_wallet' do
+    # we do not build any check_wallet tests, as we are only allowed to do this
+    # operation once every hour.
+  end
+
 end
