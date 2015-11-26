@@ -2,6 +2,23 @@ require "faraday"
 require "net/http"
 require 'ostruct'
 
+module TransferToApi
+  # Config class for rails projects
+  class Config
+    attr_accessor :username,
+                  :password
+  end
+
+  def self.config
+    @@config ||= Config.new
+  end
+
+  def self.configure
+    yield self.config
+  end
+end
+
+
 # require transfer_to files..
 require "transfer_to/version"
 require "transfer_to/command_exception"
@@ -27,3 +44,4 @@ require "transfer_to/operator"
 require "transfer_to/trans_list"
 require "transfer_to/get_id_from_key"
 require "transfer_to/connection_exception"
+require "transfer_to/credentials_exception"

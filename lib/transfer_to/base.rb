@@ -2,8 +2,8 @@ module TransferToApi
   # This is a base class for the TransferTo API
   class Base
 
-    @@username
-    @@password
+    @@username = nil
+    @@password = nil
 
     attr_reader :authentication_key, :error_code, :error_txt, :raw_response
 
@@ -32,6 +32,16 @@ module TransferToApi
     # Determines the type of request issued (get|post).
     def self.run_action(name, params = {}, method = :post)
       aurl     = "https://fm.transfer-to.com:5443"
+
+      if @@username.nil?
+        if TransferToApi.config.username.nil?
+          raise TransferToApi::CredentialsException.new
+        else
+          @@username = TransferToApi.config.username
+          @@password = TransferToApi.config.password
+        end
+      end
+
       request = ::TransferToApi::Request.new @@username, @@password, aurl
 
       # CgConfig::TRANSFER2[:bla]

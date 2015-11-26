@@ -44,7 +44,7 @@ describe 'Transfer To API Client' do
 
   context '#pricelist' do
     it 'should return a list of countries' do
-      pricelist = TransferToApi::Pricelist.login(@user, @pass).get_countries
+      pricelist = TransferToApi::Pricelist.get_countries
       expect(pricelist.error_code).to eq 0
       expect(pricelist.countries.length).to be > 10
 
@@ -53,7 +53,7 @@ describe 'Transfer To API Client' do
     end
 
     it 'with country should return a list of operators for that country' do
-      pricelist = TransferToApi::Pricelist.login(@user, @pass).get_operators_for_country(@open_range_country_id)
+      pricelist = TransferToApi::Pricelist.get_operators_for_country(@open_range_country_id)
       expect(pricelist.error_code).to eq 0
       expect(pricelist.operators.length).to be > 5
 
@@ -63,7 +63,7 @@ describe 'Transfer To API Client' do
     end
 
     it 'with an open range operator should return a list of open range products' do
-      pricelist = TransferToApi::Pricelist.login(@user, @pass).get_products_for_operator(@open_range_operator_id)
+      pricelist = TransferToApi::Pricelist.get_products_for_operator(@open_range_operator_id)
       expect(pricelist.error_code).to eq 0
       expect(pricelist.products.length).to eq 1
 
@@ -75,7 +75,7 @@ describe 'Transfer To API Client' do
     end
 
     it 'with an fixed denomination operator should return a list of fixed denomination products' do
-      pricelist = TransferToApi::Pricelist.login(@user, @pass).get_products_for_operator(@fixed_denomination_operator_id)
+      pricelist = TransferToApi::Pricelist.get_products_for_operator(@fixed_denomination_operator_id)
       expect(pricelist.error_code).to eq 0
       expect(pricelist.products.length).to be > 3
 
@@ -88,7 +88,7 @@ describe 'Transfer To API Client' do
 
   context '#msisdn_info' do
     it 'for an open range carrier should return open range information' do
-      info = TransferToApi::MsisdnInfo.login(@user, @pass).get(@open_range_phone_number)
+      info = TransferToApi::MsisdnInfo.get(@open_range_phone_number)
       expect(info.error_code).to eq 0
 
       expect(info.operator.country.id).to eq @open_range_country_id
@@ -97,7 +97,7 @@ describe 'Transfer To API Client' do
     end
 
     it 'for an fixed denomination carrier should return fixed denomination information' do
-      info = TransferToApi::MsisdnInfo.login(@user, @pass).get(@fixed_denomination_phone_number)
+      info = TransferToApi::MsisdnInfo.get(@fixed_denomination_phone_number)
       expect(info.error_code).to eq 0
 
       expect(info.operator.country.id).to eq @fixed_denomination_country_id
@@ -108,7 +108,7 @@ describe 'Transfer To API Client' do
 
   context '#reserve id' do
     it 'should receive a transaction id' do
-      reserve_id = TransferToApi::ReserveId.login(@user, @pass).get
+      reserve_id = TransferToApi::ReserveId.get
       expect(reserve_id.error_code).to eq 0
       expect(reserve_id.reserved_id).to match(/^[0-9]{8}[0-9]*$/)
     end
@@ -116,10 +116,10 @@ describe 'Transfer To API Client' do
 
   context '#topup' do
     it 'on a pinless operator should perform a pinless topup' do
-      info = TransferToApi::MsisdnInfo.login(@user, @pass).get(@open_range_phone_number)
+      info = TransferToApi::MsisdnInfo.get(@open_range_phone_number)
       expect(info.error_code).to eq 0
 
-      topup = TransferToApi::Topup.login(@user, @pass).perform('Recharge.com', @open_range_phone_number, info.minimum_amount_requested_currency, info.skuid, info.requested_currency, nil, nil, nil, nil, true)
+      topup = TransferToApi::Topup.perform('Recharge.com', @open_range_phone_number, info.minimum_amount_requested_currency, info.skuid, info.requested_currency, nil, nil, nil, nil, true)
       expect(topup.error_code).to eq 0
       expect(topup.destination_msisdn).to eq @open_range_phone_number
       expect(topup.local_info_amount).to eq info.minimum_amount_local_currency
@@ -133,10 +133,10 @@ describe 'Transfer To API Client' do
     end
 
     it 'on a pin based operator should perform a pin based topup' do
-      info = TransferToApi::MsisdnInfo.login(@user, @pass).get(@pin_based_phone_number)
+      info = TransferToApi::MsisdnInfo.get(@pin_based_phone_number)
       expect(info.error_code).to eq 0
 
-      topup = TransferToApi::Topup.login(@user, @pass).perform('Recharge.com', @pin_based_phone_number, info.minimum_amount_requested_currency, info.skuid, info.requested_currency)
+      topup = TransferToApi::Topup.perform('Recharge.com', @pin_based_phone_number, info.minimum_amount_requested_currency, info.skuid, info.requested_currency)
       expect(topup.error_code).to eq 0
       expect(topup.destination_msisdn).to eq @pin_based_phone_number
       expect(topup.local_info_amount).to eq info.minimum_amount_local_currency
@@ -150,10 +150,10 @@ describe 'Transfer To API Client' do
     end
 
     it 'on a fixed denomination operator should successfully a topup' do
-      info = TransferToApi::MsisdnInfo.login(@user, @pass).get(@fixed_denomination_phone_number)
+      info = TransferToApi::MsisdnInfo.get(@fixed_denomination_phone_number)
       expect(info.error_code).to eq 0
 
-      topup = TransferToApi::Topup.login(@user, @pass).perform('Recharge.com', @fixed_denomination_phone_number, info.products.first.product, info.products.first.skuid, info.requested_currency, nil, nil, nil, nil, true)
+      topup = TransferToApi::Topup.perform('Recharge.com', @fixed_denomination_phone_number, info.products.first.product, info.products.first.skuid, info.requested_currency, nil, nil, nil, nil, true)
       expect(topup.error_code).to eq 0
       expect(topup.destination_msisdn).to eq @fixed_denomination_phone_number
       expect(topup.local_info_amount).to eq info.products.first.local_amount
@@ -191,16 +191,16 @@ describe 'Transfer To API Client' do
 
     def test_error(error_phone_number, expected_exception_code)
       expect {
-        info = TransferToApi::MsisdnInfo.login(@user, @pass).get(error_phone_number)
+        info = TransferToApi::MsisdnInfo.get(error_phone_number)
         expect(info.error_code).to eq 0
-        topup = TransferToApi::Topup.login(@user, @pass).perform('Recharge.com', error_phone_number, info.minimum_amount_requested_currency, info.skuid, info.requested_currency)
+        topup = TransferToApi::Topup.perform('Recharge.com', error_phone_number, info.minimum_amount_requested_currency, info.skuid, info.requested_currency)
       }.to raise_exception(TransferToApi::CommandException){|ex| expect(ex.code).to eq expected_exception_code}
     end
   end
 
   context '#trans_list' do
     it 'should return a list of transactions' do
-      list = TransferToApi::TransList.login(@user, @pass).get('2015-11-01', '2015-11-10')
+      list = TransferToApi::TransList.get('2015-11-01', '2015-11-10')
       expect(list.error_code).to eq 0
       expect(list.transaction_ids.count).to be > 3
     end
@@ -211,7 +211,7 @@ describe 'Transfer To API Client' do
     # As a real topup costs money, we can not perform a topup every time the tests
     # run. Whe therefore use hardcoded previously executed topups.
     it 'should return information about a pinless transaction' do
-      info = TransferToApi::TransInfo.login(@user, @pass).get(@pinless_transaction_id)
+      info = TransferToApi::TransInfo.get(@pinless_transaction_id)
       expect(info.error_code).to eq 0
       expect(info.actual_product_sent).to eq '50.22'
       expect(info.pin_based).to eq 'no'
@@ -220,7 +220,7 @@ describe 'Transfer To API Client' do
     end
 
     it 'should return information about a pin transaction' do
-      info = TransferToApi::TransInfo.login(@user, @pass).get(@pin_based_transaction_id)
+      info = TransferToApi::TransInfo.get(@pin_based_transaction_id)
       expect(info.error_code).to eq 0
       expect(info.actual_product_sent).to eq '200'
       expect(info.pin_based).to eq 'yes'
@@ -237,7 +237,7 @@ describe 'Transfer To API Client' do
     # we can only get id from key of actual transactions. We therefore have to
     # test against previously done real transactions.
     it 'should return the transaction-id based from an authentication_key' do
-      id_from_key = TransferToApi::GetIdFromKey.login(@user, @pass).get(@pin_based_transaction_authentication_key)
+      id_from_key = TransferToApi::GetIdFromKey.get(@pin_based_transaction_authentication_key)
       expect(id_from_key.error_code).to eq 0
       expect(id_from_key.transaction_id).to eq @pin_based_transaction_id
     end
@@ -246,6 +246,16 @@ describe 'Transfer To API Client' do
   context '#check_wallet' do
     # we do not build any check_wallet tests, as we are only allowed to do this
     # operation once every hour.
+  end
+
+  context '#credentials' do
+    it 'should use credentials from login function before looking for credentials in config' do
+      # exception proves we use the wrong given username/password instead of the
+      # correct user/pass in the configuration.
+      expect {
+        pricelist = TransferToApi::Pricelist.login('wrongusername', 'wrongpassword').get_countries
+      }.to raise_exception(TransferToApi::CommandException)
+    end
   end
 
 end

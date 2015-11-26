@@ -4,7 +4,7 @@ require 'transfer_to/version'
 Gem::Specification.new do |gem|
   gem.name          = "transfer_to"
   gem.version       = TransferToApi::VERSION
-  gem.authors       = ['Nikhil Gupta', 'L. Doubrava', 'M. Siroen']
+  gem.authors       = ['Nikhil Gupta', 'L. Doubrava', 'M. Siroen', 'G. Selten']
   gem.email         = ['me@nikhgupta.com']
   gem.description   = %q{Consumes TransferTo.com API and provides with ruby methods for the same}
   gem.summary       = %q{Gem to consume TransferTo.com API}
@@ -16,11 +16,14 @@ Gem::Specification.new do |gem|
   gem.require_paths = ['lib']
 
   gem.add_dependency 'faraday'
-#  gem.add_dependency 'cg_config' 
+  gem.add_dependency('rails', ['>= 0'])
 
   gem.add_development_dependency 'bundler'
   gem.add_development_dependency('rake', ['>= 0'])
   gem.add_development_dependency 'byebug'
   gem.add_development_dependency 'pry-byebug'
   gem.add_development_dependency('rspec', ['>= 0'])
+  gem.add_development_dependency('rspec-rails', ['>= 0'])
+  gem.add_development_dependency('sqlite3', ['>= 0'])
+  
 end
