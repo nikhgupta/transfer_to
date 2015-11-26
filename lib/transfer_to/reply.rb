@@ -14,7 +14,7 @@ module TransferToApi
     # The reply as received from Faraday's request.
     def initialize(reply)
       @response = OpenStruct.new reply.to_hash
-      @raw_response = reply
+      @raw_response = [:url => reply.url.to_s, :body => reply.body.to_s, :headers => reply.response_headers.to_s, :status => reply.status.to_s]
     end
 
     # Starts a pry session for debugging purposes.

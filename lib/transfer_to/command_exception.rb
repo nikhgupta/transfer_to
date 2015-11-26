@@ -2,7 +2,7 @@ module TransferToApi
   # This is a wrapper class for TransferTo Error codes.
   class CommandException < StandardError
 
-    attr_reader :code
+    attr_reader :code, :raw_response
 
     # Possible errors
     MSISDN_OUT_OF_RANGE = 101
@@ -69,7 +69,8 @@ module TransferToApi
 
     # This method is used to instantiate a new Error object with a response code
     # from the API.
-    def initialize(code, message = nil)
+    def initialize(raw_response, code, message = nil)
+      @raw_response = raw_response
       @code = code.to_i
       super(message)
     end
