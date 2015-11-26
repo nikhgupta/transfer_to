@@ -20,3 +20,4 @@ tmp
 .idea/
 Gemfile.lock
 spec/credentials.txt
+spec/dummy/log/test.log
