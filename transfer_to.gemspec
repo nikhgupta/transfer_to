@@ -3,7 +3,7 @@ require 'transfer_to/version'
 
 Gem::Specification.new do |gem|
   gem.name          = "transfer_to"
-  gem.version       = TransferToApi::VERSION
+  gem.version       = '1.0.1'
   gem.authors       = ['Nikhil Gupta', 'L. Doubrava', 'M. Siroen', 'G. Selten']
   gem.email         = ['me@nikhgupta.com']
   gem.description   = %q{Consumes TransferTo.com API and provides with ruby methods for the same}
@@ -25,5 +25,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency('rspec', ['>= 0'])
   gem.add_development_dependency('rspec-rails', ['>= 0'])
   gem.add_development_dependency('sqlite3', ['>= 0'])
-  
+
 end
