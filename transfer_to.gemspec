@@ -3,7 +3,7 @@ require 'transfer_to/version'
 
 Gem::Specification.new do |gem|
   gem.name          = "transfer_to"
-  gem.version       = '1.0.1'
+  gem.version       = TransferToApi::VERSION
   gem.authors       = ['Nikhil Gupta', 'L. Doubrava', 'M. Siroen', 'G. Selten']
   gem.email         = ['me@nikhgupta.com']
   gem.description   = %q{Consumes TransferTo.com API and provides with ruby methods for the same}
