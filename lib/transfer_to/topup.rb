@@ -54,7 +54,7 @@ module TransferToApi
       # ----------
       # Default: false
       # Sends the topup request without doing the actual topup.
-      def self.perform(sender, destination, amount, skuid, currency = 'USD', reserved_id = nil,
+      def self.perform_action(sender, destination, amount, skuid, currency = 'USD', reserved_id = nil,
                 recipient_sms = nil, sender_sms = nil, operator_id = nil, simulate = false)
         params = { skuid: skuid, msisdn: sender, destination_msisdn: destination, product: amount }
 
