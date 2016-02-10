@@ -13,9 +13,7 @@ module TransferToApi
     end
 
     def is_pin_based?
-      name_parts = operator.name.split(' ')
-      return true if name_parts.include?('PIN')
-      false
+      operator.is_pin_based?
     end
   end
 end
