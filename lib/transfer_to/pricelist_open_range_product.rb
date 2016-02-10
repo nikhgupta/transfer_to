@@ -14,6 +14,5 @@ module TransferToApi
       @requested_currency = response.data[:open_range_requested_currency]
       super(response)
     end
-
   end
 end
