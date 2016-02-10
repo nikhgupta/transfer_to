@@ -119,7 +119,7 @@ describe 'Transfer To API Client' do
       info = TransferToApi::MsisdnInfo.get(@open_range_phone_number)
       expect(info.error_code).to eq 0
 
-      topup = TransferToApi::Topup.perform('Recharge.com', @open_range_phone_number, info.minimum_amount_requested_currency, info.skuid, info.requested_currency, nil, nil, nil, nil, true)
+      topup = TransferToApi::Topup.perform_action('Recharge.com', @open_range_phone_number, info.minimum_amount_requested_currency, info.skuid, info.requested_currency, nil, nil, nil, nil, true)
       expect(topup.error_code).to eq 0
       expect(topup.destination_msisdn).to eq @open_range_phone_number
       expect(topup.local_info_amount).to eq info.minimum_amount_local_currency
@@ -136,7 +136,7 @@ describe 'Transfer To API Client' do
       info = TransferToApi::MsisdnInfo.get(@pin_based_phone_number)
       expect(info.error_code).to eq 0
 
-      topup = TransferToApi::Topup.perform('Recharge.com', @pin_based_phone_number, info.minimum_amount_requested_currency, info.skuid, info.requested_currency)
+      topup = TransferToApi::Topup.perform_action('Recharge.com', @pin_based_phone_number, info.minimum_amount_requested_currency, info.skuid, info.requested_currency)
       expect(topup.error_code).to eq 0
       expect(topup.destination_msisdn).to eq @pin_based_phone_number
       expect(topup.local_info_amount).to eq info.minimum_amount_local_currency
@@ -153,7 +153,7 @@ describe 'Transfer To API Client' do
       info = TransferToApi::MsisdnInfo.get(@fixed_denomination_phone_number)
       expect(info.error_code).to eq 0
 
-      topup = TransferToApi::Topup.perform('Recharge.com', @fixed_denomination_phone_number, info.products.first.product, info.products.first.skuid, info.requested_currency, nil, nil, nil, nil, true)
+      topup = TransferToApi::Topup.perform_action('Recharge.com', @fixed_denomination_phone_number, info.products.first.product, info.products.first.skuid, info.requested_currency, nil, nil, nil, nil, true)
       expect(topup.error_code).to eq 0
       expect(topup.destination_msisdn).to eq @fixed_denomination_phone_number
       expect(topup.local_info_amount).to eq info.products.first.local_amount
@@ -193,7 +193,7 @@ describe 'Transfer To API Client' do
       expect {
         info = TransferToApi::MsisdnInfo.get(error_phone_number)
         expect(info.error_code).to eq 0
-        topup = TransferToApi::Topup.perform('Recharge.com', error_phone_number, info.minimum_amount_requested_currency, info.skuid, info.requested_currency)
+        topup = TransferToApi::Topup.perform_action('Recharge.com', error_phone_number, info.minimum_amount_requested_currency, info.skuid, info.requested_currency)
       }.to raise_exception(TransferToApi::CommandException){|ex| expect(ex.code).to eq expected_exception_code}
     end
   end
