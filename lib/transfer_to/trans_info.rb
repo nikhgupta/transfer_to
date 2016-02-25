@@ -13,14 +13,14 @@ module TransferToApi
     :open_range_wholesale_discount, :open_range_wholesale_rate
 
     # This method can be used to retrieve available information on a specific
-    # transaction. Please note that values of “input_value” and
-    # “debit_amount_validated” are rounded to 2 digits after the comma but are
-    # the same as the values returned in the fields “input_value” and
-    # “validated_input_value” of the “topup” method response.
+    # transaction. Please note that values of "input_value" and
+    # "debit_amount_validated" are rounded to 2 digits after the comma but are
+    # the same as the values returned in the fields "input_value" and
+    # "validated_input_value" of the "topup" method response.
     def self.get(transaction_id)
       params = {transactionid: transaction_id}
       response = run_action :trans_info, params
-      if(response.data[:pin_based] == 'yes')
+      if response.data[:pin_based] == 'yes'
         return TransferToApi::TransInfoPin.new(response)
       else
         return TransferToApi::TransInfo.new(response)
