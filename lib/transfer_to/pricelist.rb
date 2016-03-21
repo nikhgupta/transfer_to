@@ -9,15 +9,15 @@ module TransferToApi
     # ==========
     # info_type
     # ---------
-    #   i) “countries”: Returns a list of all countries offered to you
-    #  ii) “country”  : Returns a list of operators in the country
-    # iii) “operator” : Returns a list of wholesale and retail price for the operator
+    #   i) "countries": Returns a list of all countries offered to you
+    #  ii) "country"  : Returns a list of operators in the country
+    # iii) "operator" : Returns a list of wholesale and retail price for the operator
     #
     # content
     # -------
-    #   i) Not used if info_type = “countries”
-    #  ii) countryid of the requested country if info_type = “country”
-    # iii) operatorid of the requested operator if info_type = “operator”
+    #   i) Not used if info_type = "countries"
+    #  ii) countryid of the requested country if info_type = "country"
+    # iii) operatorid of the requested operator if info_type = "operator"
     # def pricelist(info_type, content = nil)
     #   params = {info_type: info_type}
     #   params.merge!({content: content}) if content
@@ -61,7 +61,12 @@ module TransferToApi
     end
 
     def self.get_products_for_operator(operator_id)
-      params = {info_type: 'operator', content: operator_id}
+      params = {
+        info_type: 'operator',
+        content: operator_id,
+        return_open_range_wholesale: '1',
+        return_product_type: '1'
+      }
       response = run_action :pricelist, params
 
       pricelist = TransferToApi::Pricelist.new(response)
