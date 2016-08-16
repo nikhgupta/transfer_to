@@ -64,6 +64,7 @@ module TransferToApi
           currency: currency,
           operatorid: (operator_id.is_a?(Integer) ? operator_id.to_i : nil),
           sender_sms: (sender_sms ? "yes" : "no"),
+          send_sms: "no",
           sms: recipient_sms,
           skuid: skuid,
           sender_text: sender_sms,
