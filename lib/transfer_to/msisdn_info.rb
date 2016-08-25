@@ -14,7 +14,7 @@ module TransferToApi
         return_service_fee: 1
       }
       params.merge!({
-        operatorid: (operator_id.is_a?(Integer) ? operator_id.to_i : nil)
+        operatorid: operator_id
       })
       response = run_action :msisdn_info, params
 
