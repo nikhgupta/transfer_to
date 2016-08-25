@@ -62,7 +62,7 @@ module TransferToApi
           cid1: "", cid2: "", cid3: "",
           reserved_id: reserved_id,
           currency: currency,
-          operatorid: (operator_id.is_a?(Integer) ? operator_id.to_i : nil),
+          operatorid: operator_id,
           sender_sms: (sender_sms ? "yes" : "no"),
           send_sms: "no",
           sms: recipient_sms,
