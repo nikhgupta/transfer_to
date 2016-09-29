@@ -78,11 +78,13 @@ module TransferToApi
         product_list = response.data[:product_list].split(',')
         retail_price_list = response.data[:retail_price_list].split(',')
         wholesale_price_list = response.data[:wholesale_price_list].split(',')
+        skuid_list = response.data[:skuid_list].split(',')
         product_list.count.times do |count|
           products << TransferToApi::PricelistFixedProduct.new(
               product_list[count],
               retail_price_list[count],
               wholesale_price_list[count],
+              skuid_list[count],
               response
           )
         end
