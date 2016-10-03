@@ -244,8 +244,9 @@ describe 'Transfer To API Client' do
   end
 
   context '#check_wallet' do
-    # we do not build any check_wallet tests, as we are only allowed to do this
-    # operation once every hour.
+    it 'should get the credit in the transferto account' do
+      credit = TransferToApi::CheckWallet.get
+    end
   end
 
   context '#credentials' do
