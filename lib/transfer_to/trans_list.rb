@@ -33,7 +33,12 @@ module TransferToApi
     # only all successful transactions. If left empty, all transactions will be
     # returned(Failed and successful).
     #
-    def self.get(start_date, end_date, msisdn=nil, destination=nil, code=nil)
+    def self.get(*args)
+      args.prepend(TransferToApi::Client.new)
+      self.send(:get_from_client, *args)
+    end
+
+    def self.get_from_client(client, start_date, end_date, msisdn=nil, destination=nil, code=nil)
       params = { }
 
       params[:code] = code unless code
@@ -42,7 +47,7 @@ module TransferToApi
       params[:start_date] = start_date
       params[:destination_msisdn] = destination unless destination
 
-      response = run_action :trans_list, params
+      response = client.run_action :trans_list, params
       TransferToApi::TransList.new(response)
     end
 

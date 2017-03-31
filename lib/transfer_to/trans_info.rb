@@ -17,9 +17,14 @@ module TransferToApi
     # "debit_amount_validated" are rounded to 2 digits after the comma but are
     # the same as the values returned in the fields "input_value" and
     # "validated_input_value" of the "topup" method response.
-    def self.get(transaction_id)
+    def self.get(*args)
+      args.prepend(TransferToApi::Client.new)
+      self.send(:get_from_client, *args)
+    end
+
+    def self.get_from_client(client, transaction_id)
       params = {transactionid: transaction_id}
-      response = run_action :trans_info, params
+      response = client.run_action :trans_info, params
       if response.data[:pin_based] == 'yes'
         return TransferToApi::TransInfoPin.new(response)
       else

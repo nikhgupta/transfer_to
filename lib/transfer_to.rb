@@ -21,6 +21,7 @@ end
 
 # require transfer_to files..
 require "transfer_to/version"
+require "transfer_to/client"
 require "transfer_to/command_exception"
 require "transfer_to/request"
 require "transfer_to/reply"
