@@ -65,7 +65,8 @@ module TransferToApi
         info_type: 'operator',
         content: operator_id,
         return_open_range_wholesale: '1',
-        return_product_type: '1'
+        return_product_type: '1',
+        return_fx: '1'
       }
       response = run_action :pricelist, params
 
