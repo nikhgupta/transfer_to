@@ -37,7 +37,7 @@ module TransferToApi
       hash = {}
       @response.body.lines.each do |line|
         key, value = line.strip.split "="
-        hash[key.to_sym] = (key == "error_code") ? value.to_i : value
+        hash[key.to_sym] = (key == "error_code") ? value.to_i : value if key
       end; hash
     end
 

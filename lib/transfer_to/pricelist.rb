@@ -23,10 +23,14 @@ module TransferToApi
     #   params.merge!({content: content}) if content
     #   run_action :pricelist, params
     # end
+    def self.get_countries(*args)
+      args.prepend(TransferToApi::Client.new)
+      self.send(:get_countries_from_client, *args)
+    end
 
-    def self.get_countries
+    def self.get_countries_from_client(client)
       params = {info_type: 'countries'}
-      response = run_action :pricelist, params
+      response = client.run_action :pricelist, params
 
       pricelist = TransferToApi::Pricelist.new(response)
 
@@ -42,9 +46,14 @@ module TransferToApi
       pricelist
     end
 
-    def self.get_operators_for_country(country_id)
+    def self.get_operators_for_country(*args)
+      args.prepend(TransferToApi::Client.new)
+      self.send(:get_operators_for_country_from_client, *args)
+    end
+
+    def self.get_operators_for_country_from_client(client, country_id)
       params = {info_type: 'country', content: country_id}
-      response = run_action :pricelist, params
+      response = client.run_action :pricelist, params
 
       pricelist = TransferToApi::Pricelist.new(response)
 
@@ -60,7 +69,12 @@ module TransferToApi
       pricelist
     end
 
-    def self.get_products_for_operator(operator_id)
+    def self.get_products_for_operator(*args)
+      args.prepend(TransferToApi::Client.new)
+      self.send(:get_products_for_operator_from_client, *args)
+    end
+
+    def self.get_products_for_operator_from_client(client, operator_id)
       params = {
         info_type: 'operator',
         content: operator_id,
@@ -68,7 +82,7 @@ module TransferToApi
         return_product_type: '1',
         return_fx: '1'
       }
-      response = run_action :pricelist, params
+      response = client.run_action :pricelist, params
 
       pricelist = TransferToApi::Pricelist.new(response)
 

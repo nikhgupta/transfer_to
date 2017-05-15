@@ -37,9 +37,9 @@ describe 'Transfer To API Client' do
 
     # real transactions that have been performed because they couldn't be
     # tested otherwise.
-    @pin_based_transaction_id = '429880264'
-    @pin_based_transaction_authentication_key = '14484522647113573979'
-    @pinless_transaction_id = '428661615'
+    @pin_based_transaction_id = '539070192'
+    @pin_based_transaction_authentication_key = '14909596082727013589'
+    @pinless_transaction_id = '539109977'
   end
 
   context '#pricelist' do
@@ -200,7 +200,7 @@ describe 'Transfer To API Client' do
 
   context '#trans_list' do
     it 'should return a list of transactions' do
-      list = TransferToApi::TransList.get('2015-11-01', '2015-11-10')
+      list = TransferToApi::TransList.get('2016-11-01', '2016-11-10')
       expect(list.error_code).to eq 0
       expect(list.transaction_ids.count).to be > 3
     end
@@ -213,20 +213,20 @@ describe 'Transfer To API Client' do
     it 'should return information about a pinless transaction' do
       info = TransferToApi::TransInfo.get(@pinless_transaction_id)
       expect(info.error_code).to eq 0
-      expect(info.actual_product_sent).to eq '50.22'
+      expect(info.actual_product_sent).to eq '35'
       expect(info.pin_based).to eq 'no'
-      expect(info.operator.id).to eq '400'
+      expect(info.operator.id).to eq '1534'
       expect(info.class).to eq TransferToApi::TransInfo
     end
 
     it 'should return information about a pin transaction' do
       info = TransferToApi::TransInfo.get(@pin_based_transaction_id)
       expect(info.error_code).to eq 0
-      expect(info.actual_product_sent).to eq '200'
+      expect(info.actual_product_sent).to eq '100'
       expect(info.pin_based).to eq 'yes'
-      expect(info.operator.id).to eq '1553'
+      expect(info.operator.id).to eq '2440'
       expect(info.class).to eq TransferToApi::TransInfoPin
-      expect(info.pin_code).to eq '7626938502549280'
+      expect(info.pin_code).to eq '410128408676'
     end
 
     # optional: tests with information about failed transactions.
@@ -254,7 +254,8 @@ describe 'Transfer To API Client' do
       # exception proves we use the wrong given username/password instead of the
       # correct user/pass in the configuration.
       expect {
-        pricelist = TransferToApi::Pricelist.login('wrongusername', 'wrongpassword').get_countries
+        client = TransferToApi::Client.new('wrongusername', 'wrongpassword')
+        pricelist = TransferToApi::Pricelist.get_countries_from_client(client)
       }.to raise_exception(TransferToApi::CommandException)
     end
   end
