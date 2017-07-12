@@ -15,3 +15,9 @@ spec/reports
 test/tmp
 test/version_tmp
 tmp
+.DS_Store
+.rvmrc
+.idea/
+Gemfile.lock
+spec/credentials.txt
+spec/dummy/log/test.log

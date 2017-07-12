@@ -1,6 +1,6 @@
 # TransferTo
 
-TODO: Write a gem description
+A client for TransferTo API communication
 
 ## Installation
 
@@ -18,7 +18,7 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+@transfer_to_client = TransferToApi::Client.new("account", "password")
 
 ## Contributing
 
