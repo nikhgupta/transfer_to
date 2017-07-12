@@ -29,6 +29,10 @@ module TransferToApi
         # fixed denomination
         return TransferToApi::MsisdnInfoFixedDenomination.new(response)
       else
+        # log 'all required argument not received error (919)'
+        Spree::History.write(
+          "TRANSFER_TO API error 919 received while sending these parameters: #{params}"
+        ) if response.status.to_s == '919'
         raise "Unknown response type."
       end
     end
