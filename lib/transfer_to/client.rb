@@ -48,11 +48,11 @@ module TransferToApi
           reply = ::TransferToApi::Reply.new(api_reply)
         end
       rescue Faraday::TimeoutError => e
-        raise TransferToApi::TimeoutException.new
+        raise TransferToApi::TimeoutException.new(e.message)
       rescue Faraday::ResourceNotFound => e
-        raise TransferToApi::ResourceNotFound.new
-      rescue
-        raise TransferToApi::ConnectionException.new
+        raise TransferToApi::ResourceNotFound.new(e.message)
+      rescue => e
+        raise TransferToApi::ConnectionException.new(e.message)
       end
 
       unless reply.status == 200
