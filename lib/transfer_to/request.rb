@@ -87,8 +87,8 @@ module TransferToApi
     def run(method = :get)
       add_param :method, method
       @conn.send(method, "/cgi-bin/shop/topup", @params) do |req|
-        req.options.timeout = 600
-        req.options.open_timeout = 600
+        req.options.timeout = 300
+        req.options.open_timeout = 60
       end
     end
 
