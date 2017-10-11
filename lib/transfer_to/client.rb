@@ -26,7 +26,7 @@ module TransferToApi
     # Default: get
     # Determines the type of request issued (get|post).
     def run_action(name, params = {}, method = :post)
-      aurl     = "https://fm.transfer-to.com:5443"
+      aurl     = "https://airtime.transferto.com:5443"
 
       if @username.nil?
         if TransferToApi.config.username.nil?
