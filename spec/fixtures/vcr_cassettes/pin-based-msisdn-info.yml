@@ -1,0 +1,39 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://airtime.transferto.com/cgi-bin/shop/topup
+    body:
+      encoding: UTF-8
+      string: action=msisdn_info&currency=USD&delivered_amount_info=1&destination_msisdn=628123456710&key=15130030518419921209&login=rechargeops&md5=456224b9436156dda18af3388c1304b8&method=post&operatorid&return_service_fee=1
+    headers:
+      User-Agent:
+      - Faraday v0.13.1
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Type:
+      - text/plain; charset=UTF-8
+      Date:
+      - Mon, 11 Dec 2017 14:37:32 GMT
+      Server:
+      - Apache
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: "country=Indonesia\r\ncountryid=767\r\noperator=AAA-TESTING Indonesia\r\noperatorid=1310\r\nconnection_status=100\r\ndestination_msisdn=628123456710\r\ndestination_currency=IDR\r\nopen_range=1\r\nopen_range_minimum_amount_local_currency=5000\r\nopen_range_maximum_amount_local_currency=50000\r\nopen_range_minimum_amount_requested_currency=0.37\r\nopen_range_maximum_amount_requested_currency=3.69\r\nopen_range_increment_local_currency=100\r\nopen_range_requested_currency=USD\r\nskuid=8705\r\nauthentication_key=15130030518419921209\r\nerror_code=0\r\nerror_txt=Transaction
+        successful\r\n"
+    http_version: 
+  recorded_at: Mon, 11 Dec 2017 14:37:34 GMT
+recorded_with: VCR 4.0.0

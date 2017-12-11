@@ -1,0 +1,40 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://airtime.transferto.com/cgi-bin/shop/topup
+    body:
+      encoding: UTF-8
+      string: action=pricelist&content=385&info_type=operator&key=15130030048439757096&login=rechargeops&md5=cfd0748baef56cd2483d2cc72a720877&method=post&return_fx=1&return_open_range_wholesale=1&return_product_type=1
+    headers:
+      User-Agent:
+      - Faraday v0.13.1
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Type:
+      - text/plain; charset=UTF-8
+      Date:
+      - Mon, 11 Dec 2017 14:36:45 GMT
+      Server:
+      - Apache
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: "open_range_wholesale_discount=10.00,10.00,10.00,10.00,10.00,10.00\r\nopen_range_wholesale_rate=4.08,4.08,4.08,4.08,4.08,4.08\r\nproduct_type=Airtime
+        PIN Less\r\ncountry=Malaysia\r\ncountryid=799\r\noperator=Maxis Malaysia\r\noperatorid=385\r\ndestination_currency=MYR\r\nrequested_currency=USD\r\nproduct_list=5,10,20,30,60,100\r\nretail_price_list=1.48,2.96,5.93,8.88,17.77,29.61\r\nwholesale_price_list=1.33,2.66,5.33,7.99,15.99,26.65\r\nskuid_list=7499,1701,7500,1703,7501,1732\r\nauthentication_key=15130030048439757096\r\nerror_code=0\r\nerror_txt=Transaction
+        successful\r\n"
+    http_version: 
+  recorded_at: Mon, 11 Dec 2017 14:37:01 GMT
+recorded_with: VCR 4.0.0

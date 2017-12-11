@@ -1,0 +1,39 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://airtime.transferto.com/cgi-bin/shop/topup
+    body:
+      encoding: UTF-8
+      string: action=msisdn_info&currency=USD&delivered_amount_info=1&destination_msisdn=60172860300&key=15130030412278454908&login=rechargeops&md5=028389438043b9065db4ac4c24b2baf1&method=post&operatorid&return_service_fee=1
+    headers:
+      User-Agent:
+      - Faraday v0.13.1
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Type:
+      - text/plain; charset=UTF-8
+      Date:
+      - Mon, 11 Dec 2017 14:37:22 GMT
+      Server:
+      - Apache
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: "country=Malaysia\r\ncountryid=799\r\noperator=Maxis Malaysia\r\noperatorid=385\r\nconnection_status=100\r\ndestination_msisdn=60172860300\r\ndestination_currency=MYR\r\nopen_range=1\r\nrequested_currency=USD\r\nproduct_list=1.48,2.96,5.93,8.88,17.77,29.61\r\nretail_price_list=1.48,2.96,5.93,8.88,17.77,29.61\r\nwholesale_price_list=1.33,2.66,5.34,7.99,15.99,26.65\r\nservice_fee_list=0.00,0.00,0.00,0.00,0.00,0.00\r\nskuid_list=7499,1701,7500,1703,7501,1732\r\nlocal_info_value_list=5.00,10.00,20.00,30.00,60.00,100.00\r\nlocal_info_amount_list=4.72,9.43,18.87,28.30,56.60,94.34\r\nlocal_info_currency=MYR\r\nauthentication_key=15130030412278454908\r\nerror_code=0\r\nerror_txt=Transaction
+        successful\r\n"
+    http_version: 
+  recorded_at: Mon, 11 Dec 2017 14:37:23 GMT
+recorded_with: VCR 4.0.0

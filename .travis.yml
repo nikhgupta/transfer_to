@@ -1,3 +1,12 @@
 language: ruby
-rvm:
-  - 2.2
+sudo: required
+rvm: 2.2.2
+
+script:
+  - bundle install
+  - bundle exec rspec
+
+notifications:
+  slack:
+    rooms: creative-group-team:HbG6Us2kmwJUpSchT64NmZ9G
+    on_success: always
