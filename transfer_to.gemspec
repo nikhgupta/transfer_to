@@ -25,6 +25,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency('rspec', ['>= 0'])
   gem.add_development_dependency('rspec-rails', ['>= 0'])
   gem.add_development_dependency('sqlite3', ['>= 0'])
-  gem.add_development_dependency('vcr')
-  gem.add_development_dependency('webmock')
+
 end

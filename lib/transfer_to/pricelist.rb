@@ -87,7 +87,7 @@ module TransferToApi
       pricelist = TransferToApi::Pricelist.new(response)
 
       products = []
-      if open_range?(response.data)
+      if(response.data[:open_range] == '1')
         products << PricelistOpenRangeProduct.new(response)
       elsif(response.data[:product_list] != nil)
         product_list = response.data[:product_list].split(',')
@@ -107,13 +107,6 @@ module TransferToApi
 
       pricelist.products = products
       pricelist
-    end
-
-    def self.open_range?(data)
-      # The TransferTo API sometimes returns an open_range product, when it's actually a fixed range product
-      # see: https://creativegroupdev.atlassian.net/browse/PROD-229
-      multiple_products = !!(data[:product_list] =~ /,/)
-      data[:open_range] == '1' && !multiple_products
     end
 
     def initialize(response)
