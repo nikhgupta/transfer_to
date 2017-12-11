@@ -1,0 +1,43 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://airtime.transferto.com/cgi-bin/shop/topup
+    body:
+      encoding: UTF-8
+      string: action=pricelist&content=767&info_type=country&key=15130030341412750875&login=rechargeops&md5=8c4f2e1a6acca8bfbb283e9ecfcebeca&method=post
+    headers:
+      User-Agent:
+      - Faraday v0.13.1
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Cache-Control:
+      - no-cache
+      Content-Type:
+      - text/plain; charset=UTF-8
+      Date:
+      - Mon, 11 Dec 2017 14:37:16 GMT
+      Server:
+      - Apache
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: "country=Indonesia\r\ncountryid=767\r\noperator=AAA-TESTING Indonesia,Axis
+        Indonesia,Axis Indonesia Internet,Ceria Indonesia,Indosat Indonesia,Indosat
+        Indonesia Internet,PLN Indonesia,SmartFren Indonesia,Telkomsel Indonesia,Telkomsel
+        Indonesia Internet,Three Indonesia Bundles,Three Indonesia Internet,Three
+        Telecom Indonesia,XL Indonesia,XL Indonesia Bundles,XL Indonesia Internet\r\noperatorid=1310,1411,2910,1839,1312,2911,1671,1321,1324,2912,2913,2915,1327,215,2914,2916\r\nauthentication_key=15130030341412750875\r\nerror_code=0\r\nerror_txt=Transaction
+        successful\r\n"
+    http_version: 
+  recorded_at: Mon, 11 Dec 2017 14:37:16 GMT
+recorded_with: VCR 4.0.0

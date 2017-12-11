@@ -12,6 +12,8 @@ require 'rspec/rails'
 require 'byebug'
 require 'pry-byebug'
 require 'faraday'
+require 'vcr'
+require 'webmock/rspec'
 
 begin
   Bundler.setup(:default, :development)
@@ -31,4 +33,10 @@ Dir[File.join(ENGINE_RAILS_ROOT, "spec/support/**/*.rb")].each { |f| require f }
 
 RSpec.configure do |config|
   config.use_transactional_fixtures = true
+end
+
+VCR.configure do |config|
+  config.cassette_library_dir = "spec/fixtures/vcr_cassettes"
+  config.hook_into :webmock
+  config.default_cassette_options = { record: :once }
 end
