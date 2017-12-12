@@ -112,8 +112,8 @@ module TransferToApi
     def self.open_range?(data)
       # The TransferTo API sometimes returns an open_range product, when it's actually a fixed range product
       # see: https://creativegroupdev.atlassian.net/browse/PROD-229
-      multiple_products = !!(data[:product_list] =~ /,/)
-      data[:open_range] == '1' && !multiple_products
+      single_product = data[:product_list].to_s.exclude?(',')
+      data[:open_range] == '1' && single_product
     end
 
     def initialize(response)

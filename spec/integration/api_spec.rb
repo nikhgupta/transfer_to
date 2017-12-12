@@ -167,7 +167,6 @@ describe 'Transfer To API Client' do
         expect(info.error_code).to eq 0
       end
 
-
       VCR.use_cassette('topup-pin-based') do
         topup = TransferToApi::Topup.perform_action('Recharge.com', @pin_based_phone_number, info.minimum_amount_requested_currency, info.skuid, info.requested_currency)
         expect(topup.error_code).to eq 0
@@ -189,7 +188,6 @@ describe 'Transfer To API Client' do
         info = TransferToApi::MsisdnInfo.get(@fixed_denomination_phone_number)
         expect(info.error_code).to eq 0
       end
-
 
       VCR.use_cassette('topup-fixed-denomination') do
         topup = TransferToApi::Topup.perform_action('Recharge.com', @fixed_denomination_phone_number, info.products.first.product, info.products.first.skuid, info.requested_currency, nil, nil, nil, nil, true)
@@ -222,7 +220,6 @@ describe 'Transfer To API Client' do
 
     it 'system unavailable' do
       test_error(@error_998_phone_number, TransferToApi::CommandException::SYSTEM_NOT_AVAILABLE)
-
     end
 
     it 'unknown error' do
