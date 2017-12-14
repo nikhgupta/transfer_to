@@ -98,8 +98,8 @@ describe 'Transfer To API Client' do
       allow(client).to receive(:run_action) { wrong_open_range_response }
       pricelist = TransferToApi::Pricelist.get_products_for_operator_from_client(client, 'operator1')
       expect(pricelist.products.size).to eq 2
-      expect(pricelist.products.first.class).to eq TransferToApi::PricelistFixedProduct
-      expect(pricelist.products.second.class).to eq TransferToApi::PricelistFixedProduct
+      expect(pricelist.products.first).to be_a TransferToApi::PricelistFixedProduct
+      expect(pricelist.products.second).to be_a TransferToApi::PricelistFixedProduct
     end
   end
 
@@ -294,6 +294,7 @@ describe 'Transfer To API Client' do
     it 'should get the credit in the transferto account' do
       VCR.use_cassette('check-wallet') do
         credit = TransferToApi::CheckWallet.get
+        expect(credit).to be_a TransferToApi::CheckWallet
       end
     end
   end
