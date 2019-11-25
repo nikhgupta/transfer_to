@@ -2,6 +2,9 @@ module TransferToApi
   # This is the request class to issue requests against the TransferTo API.
   class Request
 
+    OPEN_TIMEOUT = 5
+    READ_TIMEOUT = 30
+
     attr_reader :user, :name, :params
 
     # Initializes a new request with a username, password and authentication url.
@@ -10,7 +13,11 @@ module TransferToApi
       @pass   = password
       @conn = Faraday.new(url: aurl) do |faraday|
         faraday.request  :url_encoded
-        faraday.adapter  :net_http
+        faraday.adapter  :net_http do |http| # yields Net::HTTP
+          http.open_timeout = OPEN_TIMEOUT
+          http.read_timeout = READ_TIMEOUT
+        end
+
       end
     end
 
