@@ -2,8 +2,8 @@ module TransferToApi
   # This is the request class to issue requests against the TransferTo API.
   class Request
 
-    OPEN_TIMEOUT = 5
     READ_TIMEOUT = 30
+    OPEN_TIMEOUT = 5
 
     attr_reader :user, :name, :params
 
@@ -13,11 +13,7 @@ module TransferToApi
       @pass   = password
       @conn = Faraday.new(url: aurl) do |faraday|
         faraday.request  :url_encoded
-        faraday.adapter  :net_http do |http| # yields Net::HTTP
-          http.open_timeout = OPEN_TIMEOUT
-          http.read_timeout = READ_TIMEOUT
-        end
-
+        faraday.adapter  :net_http
       end
     end
 
@@ -94,8 +90,8 @@ module TransferToApi
     def run(method = :get)
       add_param :method, method
       @conn.send(method, "/cgi-bin/shop/topup", @params) do |req|
-        req.options.timeout = 300
-        req.options.open_timeout = 60
+        req.options.timeout = READ_TIMEOUT
+        req.options.open_timeout = OPEN_TIMEOUT
       end
     end
 
