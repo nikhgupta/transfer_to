@@ -8,10 +8,5 @@ module TransferToApi
       @id = id
     end
 
-    def is_pin_based?
-      name_parts = name.split(' ')
-      return true if name_parts.include?('PIN')
-      false
-    end
   end
 end
